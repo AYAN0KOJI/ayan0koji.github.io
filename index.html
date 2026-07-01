@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>NIKKE - BLOX FRUITS TERMINAL</title>
+    <title>WALNUT - BLOX FRUITS TERMINAL</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
       
@@ -14,7 +14,7 @@
       body {
         font-family: 'Courier Prime', monospace;
         background-color: #0a0e0e;
-        color: #00ff41;
+        color: #ff1493;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -33,8 +33,8 @@
         height: 100%;
         background: repeating-linear-gradient(
           0deg,
-          rgba(0, 255, 65, 0.03) 0px,
-          rgba(0, 255, 65, 0.03) 1px,
+          rgba(255, 20, 147, 0.03) 0px,
+          rgba(255, 20, 147, 0.03) 1px,
           transparent 1px,
           transparent 2px
         );
@@ -56,14 +56,14 @@
         position: relative;
         z-index: 10;
         background: rgba(10, 14, 14, 0.9);
-        border: 2px solid #00ff41;
+        border: 2px solid #ff1493;
         border-radius: 5px;
         padding: 30px;
         max-width: 600px;
         box-shadow: 
-          0 0 10px #00ff41,
-          inset 0 0 10px rgba(0, 255, 65, 0.1),
-          0 0 20px rgba(0, 255, 65, 0.2);
+          0 0 10px #ff1493,
+          inset 0 0 10px rgba(255, 20, 147, 0.1),
+          0 0 20px rgba(255, 20, 147, 0.2);
         backdrop-filter: blur(5px);
       }
       
@@ -73,19 +73,19 @@
         align-items: center;
         margin-bottom: 25px;
         padding-bottom: 15px;
-        border-bottom: 1px dashed #00ff41;
+        border-bottom: 1px dashed #ff1493;
       }
       
       .terminal-title {
         font-size: 18px;
         font-weight: 700;
-        text-shadow: 0 0 10px #00ff41;
+        text-shadow: 0 0 10px #ff1493;
         letter-spacing: 2px;
       }
       
       .terminal-status {
         font-size: 12px;
-        color: #00ff41;
+        color: #ff1493;
         opacity: 0.7;
         animation: blink 1s infinite;
       }
@@ -105,27 +105,27 @@
       }
       
       .prompt {
-        color: #00ff41;
+        color: #ff1493;
         font-weight: 700;
       }
       
       .command {
-        color: #00ff41;
+        color: #ff1493;
         display: inline;
       }
       
       .output {
-        color: #0080ff;
+        color: #00bfff;
         margin-top: 5px;
         font-size: 12px;
       }
       
       .section-title {
-        color: #ff0080;
+        color: #ff69b4;
         font-weight: 700;
         margin-top: 20px;
         margin-bottom: 10px;
-        text-shadow: 0 0 10px #ff0080;
+        text-shadow: 0 0 10px #ff69b4;
         letter-spacing: 1px;
       }
       
@@ -133,9 +133,9 @@
         display: block;
         margin: 12px 0;
         padding: 12px 20px;
-        background: linear-gradient(135deg, rgba(0, 255, 65, 0.1) 0%, rgba(0, 128, 255, 0.1) 100%);
-        border: 1px solid #00ff41;
-        color: #00ff41;
+        background: linear-gradient(135deg, rgba(255, 20, 147, 0.1) 0%, rgba(0, 191, 255, 0.1) 100%);
+        border: 1px solid #ff1493;
+        color: #ff1493;
         text-decoration: none;
         border-radius: 2px;
         font-size: 12px;
@@ -152,7 +152,7 @@
       
       .server-button::before {
         content: '> ';
-        color: #ff0080;
+        color: #00bfff;
       }
       
       .server-button::after {
@@ -162,18 +162,18 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.3), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 20, 147, 0.3), transparent);
         transition: left 0.5s ease;
       }
       
       .server-button:hover {
-        background: linear-gradient(135deg, rgba(0, 255, 65, 0.3) 0%, rgba(0, 128, 255, 0.2) 100%);
+        background: linear-gradient(135deg, rgba(255, 20, 147, 0.3) 0%, rgba(0, 191, 255, 0.2) 100%);
         box-shadow: 
-          0 0 15px #00ff41,
-          inset 0 0 15px rgba(0, 255, 65, 0.2);
-        border-color: #0080ff;
-        color: #0080ff;
-        text-shadow: 0 0 10px #0080ff;
+          0 0 15px #ff1493,
+          inset 0 0 15px rgba(255, 20, 147, 0.2);
+        border-color: #00bfff;
+        color: #00bfff;
+        text-shadow: 0 0 10px #00bfff;
         transform: translateX(5px);
       }
       
@@ -186,18 +186,18 @@
         display: inline-block;
         margin-left: 10px;
         padding: 2px 8px;
-        background: rgba(255, 0, 128, 0.2);
-        border: 1px solid #ff0080;
+        background: rgba(0, 191, 255, 0.2);
+        border: 1px solid #00bfff;
         border-radius: 2px;
-        color: #ff0080;
+        color: #00bfff;
       }
       
       .footer {
         margin-top: 20px;
         padding-top: 15px;
-        border-top: 1px dashed #00ff41;
+        border-top: 1px dashed #ff1493;
         font-size: 11px;
-        color: #00ff41;
+        color: #ff1493;
         opacity: 0.6;
         text-align: center;
       }
@@ -217,13 +217,13 @@
       
       .cursor {
         animation: cursor-blink 1s infinite;
-        border-right: 2px solid #00ff41;
+        border-right: 2px solid #ff1493;
         padding-right: 5px;
       }
       
       @keyframes cursor-blink {
         0%, 50% {
-          border-right-color: #00ff41;
+          border-right-color: #ff1493;
         }
         51%, 100% {
           border-right-color: transparent;
@@ -234,17 +234,17 @@
   <body>
     <div class="terminal-container">
       <div class="terminal-header">
-        <div class="terminal-title">[NIKKE_TERMINAL_v2.7.3]</div>
+        <div class="terminal-title">[WALNUT_TERMINAL_v3.1.4]</div>
         <div class="terminal-status">● ONLINE</div>
       </div>
       
       <div class="console-line">
-        <span class="prompt">root@nikke:~#</span>
+        <span class="prompt">walnut@system:~#</span>
         <span class="command"> ./init_blox_launcher.sh</span>
       </div>
       
       <div class="console-line output">
-        [*] Initializing NIKKE Blox Fruits Launcher...
+        [*] Initializing Blox Fruits Launcher...
       </div>
       
       <div class="console-line output">
@@ -256,7 +256,7 @@
       </div>
       
       <div class="console-line">
-        <span class="prompt">root@nikke:~#</span>
+        <span class="prompt">walnut@system:~#</span>
       </div>
       
       <div class="section-title">[AVAILABLE_SERVERS]</div>
@@ -282,7 +282,7 @@
       </a>
       
       <div class="console-line" style="margin-top: 20px;">
-        <span class="prompt">root@nikke:~#</span>
+        <span class="prompt">walnut@system:~#</span>
       </div>
       
       <div class="footer">
