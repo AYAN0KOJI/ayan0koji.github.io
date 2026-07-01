@@ -3,6 +3,13 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00ff00">
+    <meta name="description" content="Elite hacker terminal inspired by Walnut. Connect to Blox Fruits servers.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WALNUT">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230a0a0a' width='192' height='192'/><text x='50%' y='50%' font-size='120' fill='%2300ff00' text-anchor='middle' dy='.3em' font-family='monospace' font-weight='bold'>W</text></svg>">
     <title>WALNUT - ELITE HACKER TERMINAL</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
@@ -303,6 +310,44 @@
         font-size: clamp(8px, 1.8vw, 10px);
       }
       
+      .pwa-badge {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0, 255, 0, 0.1);
+        border: 1px solid #00ff00;
+        padding: 8px 12px;
+        border-radius: 2px;
+        font-size: clamp(9px, 2vw, 10px);
+        color: #00ff00;
+        z-index: 100;
+        cursor: pointer;
+        display: none;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      
+      .pwa-badge:hover {
+        background: rgba(0, 255, 0, 0.2);
+        box-shadow: 0 0 10px #00ff00;
+      }
+      
+      .pwa-badge.show {
+        display: block;
+        animation: slideIn 0.3s ease;
+      }
+      
+      @keyframes slideIn {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      
       /* Mobile optimizations */
       @media (max-width: 768px) {
         body {
@@ -337,6 +382,12 @@
         .console-line {
           margin: 5px 0;
         }
+        
+        .pwa-badge {
+          bottom: 15px;
+          right: 15px;
+          padding: 6px 10px;
+        }
       }
       
       @media (max-width: 480px) {
@@ -358,7 +409,7 @@
         
         .terminal-title {
           font-size: 13px;
-            letter-spacing: 1px;
+          letter-spacing: 1px;
         }
         
         .terminal-status {
@@ -408,6 +459,13 @@
         .footer {
           font-size: 9px;
           margin-top: 15px;
+        }
+        
+        .pwa-badge {
+          bottom: 10px;
+          right: 10px;
+          padding: 5px 8px;
+          font-size: 9px;
         }
       }
     </style>
@@ -533,5 +591,45 @@
         [INFO] System Ready for Operations
       </div>
     </div>
+    
+    <div class="pwa-badge" id="pwa-badge">
+      📱 Install App
+    </div>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then((reg) => {
+              console.log('Service Worker registered');
+            })
+            .catch((err) => {
+              console.log('Service Worker registration failed:', err);
+            });
+        });
+      }
+
+      let deferredPrompt;
+      const pwaBadge = document.getElementById('pwa-badge');
+
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+        pwaBadge.classList.add('show');
+      });
+
+      pwaBadge.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          pwaBadge.classList.remove('show');
+        }
+      });
+
+      window.addEventListener('appinstalled', () => {
+        pwaBadge.classList.remove('show');
+      });
+    </script>
   </body>
 </html>
