@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>NIKKE - Blox Fruits Private Servers</title>
+    <title>NIKKE - BLOX FRUITS TERMINAL</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
       
       * {
         margin: 0;
@@ -12,16 +12,16 @@
       }
       
       body {
-        font-family: 'Orbitron', sans-serif;
-        background: linear-gradient(135deg, #0a0e27 0%, #1a0033 50%, #0a0e27 100%);
-        background-attachment: fixed;
-        color: #00ffff;
+        font-family: 'Courier Prime', monospace;
+        background-color: #0a0e0e;
+        color: #00ff41;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
         overflow: hidden;
         position: relative;
+        line-height: 1.6;
       }
       
       body::before {
@@ -31,138 +31,264 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 255, 65, 0.03) 0px,
+          rgba(0, 255, 65, 0.03) 1px,
+          transparent 1px,
+          transparent 2px
+        );
         pointer-events: none;
-        z-index: -1;
+        animation: scanlines 8s linear infinite;
+        z-index: 1;
       }
       
-      .container {
-        text-align: center;
-        z-index: 10;
-        animation: fadeIn 1s ease-in;
-      }
-      
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
+      @keyframes scanlines {
+        0% {
           transform: translateY(0);
         }
+        100% {
+          transform: translateY(10px);
+        }
       }
       
-      h1 {
-        font-size: 48px;
-        margin-bottom: 10px;
-        text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #ff00ff;
-        letter-spacing: 3px;
-        animation: glow 2s ease-in-out infinite;
+      .terminal-container {
+        position: relative;
+        z-index: 10;
+        background: rgba(10, 14, 14, 0.9);
+        border: 2px solid #00ff41;
+        border-radius: 5px;
+        padding: 30px;
+        max-width: 600px;
+        box-shadow: 
+          0 0 10px #00ff41,
+          inset 0 0 10px rgba(0, 255, 65, 0.1),
+          0 0 20px rgba(0, 255, 65, 0.2);
+        backdrop-filter: blur(5px);
       }
       
-      .subtitle {
-        font-size: 14px;
-        color: #ff00ff;
-        margin-bottom: 40px;
-        text-shadow: 0 0 10px #ff00ff;
+      .terminal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #00ff41;
+      }
+      
+      .terminal-title {
+        font-size: 18px;
+        font-weight: 700;
+        text-shadow: 0 0 10px #00ff41;
         letter-spacing: 2px;
       }
       
-      @keyframes glow {
-        0%, 100% {
-          text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+      .terminal-status {
+        font-size: 12px;
+        color: #00ff41;
+        opacity: 0.7;
+        animation: blink 1s infinite;
+      }
+      
+      @keyframes blink {
+        0%, 50% {
+          opacity: 1;
         }
-        50% {
-          text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #ff00ff;
+        51%, 100% {
+          opacity: 0;
         }
       }
       
-      .server-list {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-top: 20px;
+      .console-line {
+        margin: 8px 0;
+        font-size: 13px;
       }
       
-      a {
-        display: block;
-        padding: 15px 30px;
-        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
-        color: #00ffff;
-        text-decoration: none;
-        border: 2px solid #00ffff;
-        border-radius: 0;
-        font-size: 16px;
+      .prompt {
+        color: #00ff41;
         font-weight: 700;
-        width: 350px;
-        text-align: center;
+      }
+      
+      .command {
+        color: #00ff41;
+        display: inline;
+      }
+      
+      .output {
+        color: #0080ff;
+        margin-top: 5px;
+        font-size: 12px;
+      }
+      
+      .section-title {
+        color: #ff0080;
+        font-weight: 700;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        text-shadow: 0 0 10px #ff0080;
+        letter-spacing: 1px;
+      }
+      
+      .server-button {
+        display: block;
+        margin: 12px 0;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, rgba(0, 255, 65, 0.1) 0%, rgba(0, 128, 255, 0.1) 100%);
+        border: 1px solid #00ff41;
+        color: #00ff41;
+        text-decoration: none;
+        border-radius: 2px;
+        font-size: 12px;
+        font-family: 'Courier Prime', monospace;
+        font-weight: 700;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
         text-transform: uppercase;
         letter-spacing: 1px;
-        box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.1);
+        cursor: pointer;
+        text-align: left;
       }
       
-      a::before {
+      .server-button::before {
+        content: '> ';
+        color: #ff0080;
+      }
+      
+      .server-button::after {
         content: '';
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.3), transparent);
         transition: left 0.5s ease;
       }
       
-      a:hover {
-        background: linear-gradient(135deg, rgba(0, 255, 255, 0.3) 0%, rgba(255, 0, 255, 0.2) 100%);
-        border-color: #ff00ff;
-        color: #ff00ff;
-        box-shadow: 0 0 20px #00ffff, inset 0 0 20px rgba(255, 0, 255, 0.2);
-        transform: scale(1.05);
+      .server-button:hover {
+        background: linear-gradient(135deg, rgba(0, 255, 65, 0.3) 0%, rgba(0, 128, 255, 0.2) 100%);
+        box-shadow: 
+          0 0 15px #00ff41,
+          inset 0 0 15px rgba(0, 255, 65, 0.2);
+        border-color: #0080ff;
+        color: #0080ff;
+        text-shadow: 0 0 10px #0080ff;
+        transform: translateX(5px);
       }
       
-      a:hover::before {
+      .server-button:hover::after {
         left: 100%;
       }
       
       .server-tag {
-        font-size: 12px;
+        font-size: 10px;
         display: inline-block;
-        margin-top: 5px;
-        padding: 4px 12px;
-        background: rgba(255, 0, 255, 0.2);
-        border: 1px solid #ff00ff;
-        border-radius: 20px;
-        color: #ff00ff;
+        margin-left: 10px;
+        padding: 2px 8px;
+        background: rgba(255, 0, 128, 0.2);
+        border: 1px solid #ff0080;
+        border-radius: 2px;
+        color: #ff0080;
+      }
+      
+      .footer {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px dashed #00ff41;
+        font-size: 11px;
+        color: #00ff41;
+        opacity: 0.6;
+        text-align: center;
+      }
+      
+      .typing {
+        animation: typing 0.7s steps(40, end);
+      }
+      
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+      
+      .cursor {
+        animation: cursor-blink 1s infinite;
+        border-right: 2px solid #00ff41;
+        padding-right: 5px;
+      }
+      
+      @keyframes cursor-blink {
+        0%, 50% {
+          border-right-color: #00ff41;
+        }
+        51%, 100% {
+          border-right-color: transparent;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>⚔️ NIKKE LAUNCHER ⚔️</h1>
-      <div class="subtitle">GODDESS OF VICTORY: BLOX FRUITS</div>
+    <div class="terminal-container">
+      <div class="terminal-header">
+        <div class="terminal-title">[NIKKE_TERMINAL_v2.7.3]</div>
+        <div class="terminal-status">● ONLINE</div>
+      </div>
       
-      <div class="server-list">
-        <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100">
-          Join Indian Server
-          <div class="server-tag">REGION: INDIA</div>
-        </a>
-        <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982">
-          Join Levithan Hunt Server 1
-          <div class="server-tag">REGION: INDIA</div>
-        </a>
-        <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435">
-          Join Levithan Hunt Server 2
-          <div class="server-tag">REGION: US</div>
-        </a>
-        <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36">
-          Join US Server 1
-          <div class="server-tag">REGION: US</div>
-        </a>
+      <div class="console-line">
+        <span class="prompt">root@nikke:~#</span>
+        <span class="command"> ./init_blox_launcher.sh</span>
+      </div>
+      
+      <div class="console-line output">
+        [*] Initializing NIKKE Blox Fruits Launcher...
+      </div>
+      
+      <div class="console-line output">
+        [+] System Status: OPERATIONAL
+      </div>
+      
+      <div class="console-line output">
+        [+] Security Level: MAXIMUM
+      </div>
+      
+      <div class="console-line">
+        <span class="prompt">root@nikke:~#</span>
+      </div>
+      
+      <div class="section-title">[AVAILABLE_SERVERS]</div>
+      
+      <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100" class="server-button">
+        Connect Indian Server
+        <span class="server-tag">INDIA</span>
+      </a>
+      
+      <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982" class="server-button">
+        Connect Levithan Hunt Server 1
+        <span class="server-tag">INDIA</span>
+      </a>
+      
+      <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435" class="server-button">
+        Connect Levithan Hunt Server 2
+        <span class="server-tag">US</span>
+      </a>
+      
+      <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36" class="server-button">
+        Connect US Server 1
+        <span class="server-tag">US</span>
+      </a>
+      
+      <div class="console-line" style="margin-top: 20px;">
+        <span class="prompt">root@nikke:~#</span>
+      </div>
+      
+      <div class="footer">
+        [!] All connections encrypted with AES-256
+        <br>
+        [!] Session ID: 0x7F4A2C9E1B5D | Timestamp: 2026-07-01
       </div>
     </div>
   </body>
