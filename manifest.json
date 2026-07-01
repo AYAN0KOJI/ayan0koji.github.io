@@ -1,7 +1,7 @@
 {
-  "name": "WALNUT - Elite Hacker Terminal",
+  "name": "WALNUT - Servers",
   "short_name": "WALNUT",
-  "description": "Elite hacker terminal inspired by Walnut from Lycoris Recoil",
+  "description": "Elite Terminal inspired by Walnut from Lycoris Recoil",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
