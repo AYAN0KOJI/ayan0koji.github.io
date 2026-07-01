@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>WALNUT - BLOX FRUITS TERMINAL</title>
+    <title>WALNUT - ELITE HACKER TERMINAL</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
       
@@ -13,15 +13,16 @@
       
       body {
         font-family: 'Courier Prime', monospace;
-        background-color: #0a0e0e;
-        color: #ff1493;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 50%, #0a0a0a 100%);
+        background-attachment: fixed;
+        color: #00ff00;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
-        overflow: hidden;
+        overflow-y: auto;
         position: relative;
-        line-height: 1.6;
+        line-height: 1.5;
       }
       
       body::before {
@@ -33,8 +34,8 @@
         height: 100%;
         background: repeating-linear-gradient(
           0deg,
-          rgba(255, 20, 147, 0.03) 0px,
-          rgba(255, 20, 147, 0.03) 1px,
+          rgba(0, 255, 0, 0.02) 0px,
+          rgba(0, 255, 0, 0.02) 1px,
           transparent 1px,
           transparent 2px
         );
@@ -52,37 +53,19 @@
         }
       }
       
-      .squirrel-mascot {
-        position: fixed;
-        top: 20px;
-        right: 30px;
-        font-size: 60px;
-        animation: squirrel-bounce 2s ease-in-out infinite;
-        z-index: 5;
-        filter: drop-shadow(0 0 10px #ff1493);
-      }
-      
-      @keyframes squirrel-bounce {
-        0%, 100% {
-          transform: translateY(0px) rotate(0deg);
-        }
-        50% {
-          transform: translateY(-15px) rotate(-5deg);
-        }
-      }
-      
       .terminal-container {
         position: relative;
         z-index: 10;
-        background: rgba(10, 14, 14, 0.9);
-        border: 2px solid #ff1493;
-        border-radius: 5px;
-        padding: 30px;
-        max-width: 600px;
+        background: rgba(10, 10, 10, 0.95);
+        border: 2px solid #00ff00;
+        border-radius: 3px;
+        padding: 25px;
+        max-width: 750px;
+        margin: 20px;
         box-shadow: 
-          0 0 10px #ff1493,
-          inset 0 0 10px rgba(255, 20, 147, 0.1),
-          0 0 20px rgba(255, 20, 147, 0.2);
+          0 0 20px #00ff00,
+          inset 0 0 20px rgba(0, 255, 0, 0.05),
+          0 0 40px rgba(0, 255, 0, 0.1);
         backdrop-filter: blur(5px);
       }
       
@@ -90,95 +73,131 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 1px dashed #ff1493;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #00ff00;
       }
       
       .terminal-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
-        text-shadow: 0 0 10px #ff1493;
+        text-shadow: 0 0 10px #00ff00;
         letter-spacing: 2px;
       }
       
       .terminal-status {
-        font-size: 12px;
-        color: #ff1493;
-        opacity: 0.7;
-        animation: blink 1s infinite;
+        font-size: 11px;
+        color: #00ff00;
+        opacity: 0.8;
       }
       
-      @keyframes blink {
-        0%, 50% {
+      .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #00ff00;
+        border-radius: 50%;
+        margin-right: 5px;
+        animation: pulse 1s infinite;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
           opacity: 1;
         }
-        51%, 100% {
-          opacity: 0;
+        50% {
+          opacity: 0.5;
         }
       }
       
       .console-line {
-        margin: 8px 0;
-        font-size: 13px;
+        margin: 6px 0;
+        font-size: 12px;
       }
       
       .prompt {
-        color: #ff1493;
+        color: #00ff00;
         font-weight: 700;
       }
       
       .command {
-        color: #ff1493;
+        color: #00ff00;
         display: inline;
       }
       
       .output {
-        color: #00bfff;
-        margin-top: 5px;
-        font-size: 12px;
+        color: #00aa00;
+        margin: 4px 0;
+        font-size: 11px;
       }
       
-      .walnut-comment {
-        color: #ff69b4;
-        font-style: italic;
+      .error {
+        color: #ff0000;
+      }
+      
+      .info {
+        color: #00ff00;
+      }
+      
+      .warning {
+        color: #ffff00;
+      }
+      
+      .code-block {
+        background: rgba(0, 255, 0, 0.05);
+        border-left: 2px solid #00ff00;
+        padding: 10px 15px;
         margin: 10px 0;
+        font-size: 11px;
+        color: #00ff00;
+      }
+      
+      .section-divider {
+        border-top: 1px dashed #00ff00;
+        margin: 15px 0;
+        opacity: 0.5;
       }
       
       .section-title {
-        color: #ff69b4;
+        color: #00ff00;
         font-weight: 700;
-        margin-top: 20px;
+        margin-top: 15px;
         margin-bottom: 10px;
-        text-shadow: 0 0 10px #ff69b4;
+        text-shadow: 0 0 10px #00ff00;
         letter-spacing: 1px;
+        font-size: 13px;
+      }
+      
+      .subsection {
+        margin-left: 20px;
+        margin-top: 10px;
       }
       
       .server-button {
         display: block;
-        margin: 12px 0;
-        padding: 12px 20px;
-        background: linear-gradient(135deg, rgba(255, 20, 147, 0.1) 0%, rgba(0, 191, 255, 0.1) 100%);
-        border: 1px solid #ff1493;
-        color: #ff1493;
+        margin: 10px 0;
+        padding: 12px 18px;
+        background: linear-gradient(135deg, rgba(0, 255, 0, 0.08) 0%, rgba(0, 170, 0, 0.05) 100%);
+        border: 1px solid #00ff00;
+        color: #00ff00;
         text-decoration: none;
         border-radius: 2px;
-        font-size: 12px;
+        font-size: 11px;
         font-family: 'Courier Prime', monospace;
         font-weight: 700;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         position: relative;
         overflow: hidden;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         cursor: pointer;
         text-align: left;
       }
       
       .server-button::before {
-        content: '🐿️ ';
-        color: #00bfff;
-        margin-right: 5px;
+        content: '[LINK] ';
+        color: #00ff00;
+        opacity: 0.6;
       }
       
       .server-button::after {
@@ -188,19 +207,17 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 20, 147, 0.3), transparent);
-        transition: left 0.5s ease;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.15), transparent);
+        transition: left 0.4s ease;
       }
       
       .server-button:hover {
-        background: linear-gradient(135deg, rgba(255, 20, 147, 0.3) 0%, rgba(0, 191, 255, 0.2) 100%);
+        background: linear-gradient(135deg, rgba(0, 255, 0, 0.15) 0%, rgba(0, 170, 0, 0.1) 100%);
         box-shadow: 
-          0 0 15px #ff1493,
-          inset 0 0 15px rgba(255, 20, 147, 0.2);
-        border-color: #00bfff;
-        color: #00bfff;
-        text-shadow: 0 0 10px #00bfff;
-        transform: translateX(5px);
+          0 0 20px #00ff00,
+          inset 0 0 10px rgba(0, 255, 0, 0.1);
+        border-color: #00ff00;
+        text-shadow: 0 0 5px #00ff00;
       }
       
       .server-button:hover::after {
@@ -208,107 +225,184 @@
       }
       
       .server-tag {
-        font-size: 10px;
+        font-size: 9px;
         display: inline-block;
         margin-left: 10px;
-        padding: 2px 8px;
-        background: rgba(0, 191, 255, 0.2);
-        border: 1px solid #00bfff;
-        border-radius: 2px;
-        color: #00bfff;
+        padding: 2px 6px;
+        background: rgba(0, 255, 0, 0.1);
+        border: 1px solid #00ff00;
+        border-radius: 1px;
+        color: #00ff00;
+        opacity: 0.7;
+      }
+      
+      .stats-table {
+        margin: 10px 0;
+        font-size: 11px;
+      }
+      
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px dotted rgba(0, 255, 0, 0.3);
+      }
+      
+      .stat-label {
+        color: #00ff00;
+        opacity: 0.8;
+      }
+      
+      .stat-value {
+        color: #00ff00;
+        font-weight: 700;
       }
       
       .footer {
         margin-top: 20px;
-        padding-top: 15px;
-        border-top: 1px dashed #ff1493;
-        font-size: 11px;
-        color: #ff1493;
-        opacity: 0.6;
+        padding-top: 12px;
+        border-top: 1px solid #00ff00;
+        font-size: 10px;
+        color: #00ff00;
+        opacity: 0.7;
         text-align: center;
       }
       
-      .walnut-quote {
-        font-size: 12px;
-        color: #ff69b4;
-        margin-top: 10px;
-        font-style: italic;
+      .access-log {
+        background: rgba(0, 255, 0, 0.03);
+        border: 1px solid rgba(0, 255, 0, 0.2);
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 10px;
+        color: #00aa00;
+      }
+      
+      .timestamp {
+        color: #00ff00;
+        opacity: 0.6;
+        font-size: 10px;
       }
     </style>
   </head>
   <body>
-    <div class="squirrel-mascot">🐿️</div>
-    
     <div class="terminal-container">
       <div class="terminal-header">
-        <div class="terminal-title">[WALNUT_TERMINAL_v4.2.0]</div>
-        <div class="terminal-status">● ONLINE</div>
+        <div class="terminal-title">[WALNUT_SECURE_SYSTEM_v7.3.2]</div>
+        <div class="terminal-status">
+          <span class="status-indicator"></span>SECURE
+        </div>
       </div>
       
       <div class="console-line">
-        <span class="prompt">walnut@kurumi:~#</span>
-        <span class="command"> ./hacking_blox_fruits.sh --mode=fun</span>
+        <span class="prompt">root@walnut-hq:~#</span>
+        <span class="command"> ./initialize_network.sh</span>
       </div>
       
       <div class="console-line output">
-        [*] Initializing Walnut's Mischievous Launcher...
+        [+] System initialization started at 2026-07-01T16:06:57Z
       </div>
       
       <div class="console-line output">
-        [+] Squirrel Mode: ACTIVATED ✓
+        [+] Loading cryptographic libraries... OK
       </div>
       
       <div class="console-line output">
-        [+] Chaos Level: MAXIMUM
+        [+] Initializing secure connection pool... OK
       </div>
       
       <div class="console-line output">
-        [+] Playfulness: 9000%
+        [+] Authentication protocols verified... OK
       </div>
       
-      <div class="walnut-comment">
-        // Hehe, let's cause some mischief! ~Walnut 🐿️
+      <div class="code-block">
+        $ uname -a<br>
+        Linux walnut-hq 5.15.0-elite #1 SMP x86_64 GNU/Linux<br>
+        Kernel: 5.15.0-elite | Arch: x86_64 | Status: HARDENED
       </div>
       
-      <div class="console-line">
-        <span class="prompt">walnut@kurumi:~#</span>
+      <div class="section-divider"></div>
+      
+      <div class="section-title">[SYSTEM_INFORMATION]</div>
+      
+      <div class="stats-table">
+        <div class="stat-row">
+          <span class="stat-label">Operator:</span>
+          <span class="stat-value">WALNUT (Kurumi)</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Expertise Level:</span>
+          <span class="stat-value">ELITE - Class S</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Systems Monitored:</span>
+          <span class="stat-value">427</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Active Connections:</span>
+          <span class="stat-value">ENCRYPTED [•••••••]</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Security Clearance:</span>
+          <span class="stat-value">MAXIMUM</span>
+        </div>
       </div>
       
-      <div class="section-title">[WALNUT'S_PLAYGROUND]</div>
+      <div class="section-divider"></div>
       
-      <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100" class="server-button">
-        Join Indian Server
-        <span class="server-tag">NUTTY FUN</span>
-      </a>
+      <div class="section-title">[AVAILABLE_TARGETS]</div>
       
-      <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982" class="server-button">
-        Join Levithan Hunt 1
-        <span class="server-tag">SUPER FUN</span>
-      </a>
-      
-      <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435" class="server-button">
-        Join Levithan Hunt 2
-        <span class="server-tag">CHAOS TIME</span>
-      </a>
-      
-      <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36" class="server-button">
-        Join US Server 1
-        <span class="server-tag">MORE CHAOS</span>
-      </a>
-      
-      <div class="console-line" style="margin-top: 20px;">
-        <span class="prompt">walnut@kurumi:~#</span>
+      <div class="subsection">
+        <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100" class="server-button">
+          Connect to Indian Server Instance
+          <span class="server-tag">STABLE</span>
+        </a>
+        
+        <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982" class="server-button">
+          Connect to Levithan Hunt Server 1
+          <span class="server-tag">ACTIVE</span>
+        </a>
+        
+        <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435" class="server-button">
+          Connect to Levithan Hunt Server 2
+          <span class="server-tag">STABLE</span>
+        </a>
+        
+        <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36" class="server-button">
+          Connect to US Server 1
+          <span class="server-tag">OPTIMAL</span>
+        </a>
       </div>
       
-      <div class="walnut-comment">
-        // Don't worry, I encrypted everything! 🔐
+      <div class="section-divider"></div>
+      
+      <div class="section-title">[NETWORK_STATUS]</div>
+      
+      <div class="console-line output">
+        [+] All connections: SECURE & ENCRYPTED
+      </div>
+      
+      <div class="console-line output">
+        [+] Firewall Status: ACTIVE
+      </div>
+      
+      <div class="console-line output">
+        [+] Intrusion Detection: MONITORING
+      </div>
+      
+      <div class="access-log">
+        <div class="timestamp">[2026-07-01 16:06:57] Access Granted</div>
+        <div class="timestamp">[2026-07-01 16:06:58] Connection established</div>
+        <div class="timestamp">[2026-07-01 16:06:59] Encryption verified</div>
+      </div>
+      
+      <div class="console-line" style="margin-top: 15px;">
+        <span class="prompt">root@walnut-hq:~#</span>
       </div>
       
       <div class="footer">
-        [!] Hacked by Walnut | Encryption: Military Grade Nuts
-        <br>
-        [!] Session ID: 0xWALNUT2024 | Mood: Mischievous ✨
-        <div class="walnut-quote">"A true hacker always has fun!" - Walnut</div>
+        [SECURE] All traffic encrypted with AES-256-GCM | TLS 1.3<br>
+        [ALERT] Walnut - Elite Hacker | Mission: Information Specialist<br>
+        [STATUS] System Ready for Operations | Awaiting Command
       </div>
     </div>
   </body>
