@@ -52,6 +52,25 @@
         }
       }
       
+      .squirrel-mascot {
+        position: fixed;
+        top: 20px;
+        right: 30px;
+        font-size: 60px;
+        animation: squirrel-bounce 2s ease-in-out infinite;
+        z-index: 5;
+        filter: drop-shadow(0 0 10px #ff1493);
+      }
+      
+      @keyframes squirrel-bounce {
+        0%, 100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-15px) rotate(-5deg);
+        }
+      }
+      
       .terminal-container {
         position: relative;
         z-index: 10;
@@ -120,6 +139,12 @@
         font-size: 12px;
       }
       
+      .walnut-comment {
+        color: #ff69b4;
+        font-style: italic;
+        margin: 10px 0;
+      }
+      
       .section-title {
         color: #ff69b4;
         font-weight: 700;
@@ -151,8 +176,9 @@
       }
       
       .server-button::before {
-        content: '> ';
+        content: '🐿️ ';
         color: #00bfff;
+        margin-right: 5px;
       }
       
       .server-button::after {
@@ -202,93 +228,87 @@
         text-align: center;
       }
       
-      .typing {
-        animation: typing 0.7s steps(40, end);
-      }
-      
-      @keyframes typing {
-        from {
-          width: 0;
-        }
-        to {
-          width: 100%;
-        }
-      }
-      
-      .cursor {
-        animation: cursor-blink 1s infinite;
-        border-right: 2px solid #ff1493;
-        padding-right: 5px;
-      }
-      
-      @keyframes cursor-blink {
-        0%, 50% {
-          border-right-color: #ff1493;
-        }
-        51%, 100% {
-          border-right-color: transparent;
-        }
+      .walnut-quote {
+        font-size: 12px;
+        color: #ff69b4;
+        margin-top: 10px;
+        font-style: italic;
       }
     </style>
   </head>
   <body>
+    <div class="squirrel-mascot">🐿️</div>
+    
     <div class="terminal-container">
       <div class="terminal-header">
-        <div class="terminal-title">[WALNUT_TERMINAL_v3.1.4]</div>
+        <div class="terminal-title">[WALNUT_TERMINAL_v4.2.0]</div>
         <div class="terminal-status">● ONLINE</div>
       </div>
       
       <div class="console-line">
-        <span class="prompt">walnut@system:~#</span>
-        <span class="command"> ./init_blox_launcher.sh</span>
+        <span class="prompt">walnut@kurumi:~#</span>
+        <span class="command"> ./hacking_blox_fruits.sh --mode=fun</span>
       </div>
       
       <div class="console-line output">
-        [*] Initializing Blox Fruits Launcher...
+        [*] Initializing Walnut's Mischievous Launcher...
       </div>
       
       <div class="console-line output">
-        [+] System Status: OPERATIONAL
+        [+] Squirrel Mode: ACTIVATED ✓
       </div>
       
       <div class="console-line output">
-        [+] Security Level: MAXIMUM
+        [+] Chaos Level: MAXIMUM
+      </div>
+      
+      <div class="console-line output">
+        [+] Playfulness: 9000%
+      </div>
+      
+      <div class="walnut-comment">
+        // Hehe, let's cause some mischief! ~Walnut 🐿️
       </div>
       
       <div class="console-line">
-        <span class="prompt">walnut@system:~#</span>
+        <span class="prompt">walnut@kurumi:~#</span>
       </div>
       
-      <div class="section-title">[AVAILABLE_SERVERS]</div>
+      <div class="section-title">[WALNUT'S_PLAYGROUND]</div>
       
       <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100" class="server-button">
-        Connect Indian Server
-        <span class="server-tag">INDIA</span>
+        Join Indian Server
+        <span class="server-tag">NUTTY FUN</span>
       </a>
       
       <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982" class="server-button">
-        Connect Levithan Hunt Server 1
-        <span class="server-tag">INDIA</span>
+        Join Levithan Hunt 1
+        <span class="server-tag">SUPER FUN</span>
       </a>
       
       <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435" class="server-button">
-        Connect Levithan Hunt Server 2
-        <span class="server-tag">US</span>
+        Join Levithan Hunt 2
+        <span class="server-tag">CHAOS TIME</span>
       </a>
       
       <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36" class="server-button">
-        Connect US Server 1
-        <span class="server-tag">US</span>
+        Join US Server 1
+        <span class="server-tag">MORE CHAOS</span>
       </a>
       
       <div class="console-line" style="margin-top: 20px;">
-        <span class="prompt">walnut@system:~#</span>
+        <span class="prompt">walnut@kurumi:~#</span>
+      </div>
+      
+      <div class="walnut-comment">
+        // Don't worry, I encrypted everything! 🔐
       </div>
       
       <div class="footer">
-        [!] All connections encrypted with AES-256
+        [!] Hacked by Walnut | Encryption: Military Grade Nuts
         <br>
-        [!] Session ID: 0x7F4A2C9E1B5D | Timestamp: 2026-07-01
+        [!] Session ID: 0xWALNUT2024 | Mood: Mischievous ✨
+        <div class="walnut-quote">"A true hacker always has fun!" - Walnut</div>
       </div>
     </div>
   </body>
