@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WALNUT - ELITE HACKER TERMINAL</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
@@ -11,6 +13,11 @@
         box-sizing: border-box;
       }
       
+      html, body {
+        width: 100%;
+        height: 100%;
+      }
+      
       body {
         font-family: 'Courier Prime', monospace;
         background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 50%, #0a0a0a 100%);
@@ -19,10 +26,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        overflow-y: auto;
+        min-height: 100vh;
+        overflow-x: hidden;
         position: relative;
         line-height: 1.5;
+        padding: 10px;
       }
       
       body::before {
@@ -59,9 +67,9 @@
         background: rgba(10, 10, 10, 0.95);
         border: 2px solid #00ff00;
         border-radius: 3px;
-        padding: 25px;
-        max-width: 750px;
-        margin: 20px;
+        padding: 20px;
+        width: 100%;
+        max-width: 900px;
         box-shadow: 
           0 0 20px #00ff00,
           inset 0 0 20px rgba(0, 255, 0, 0.05),
@@ -76,17 +84,19 @@
         margin-bottom: 20px;
         padding-bottom: 12px;
         border-bottom: 1px solid #00ff00;
+        flex-wrap: wrap;
+        gap: 10px;
       }
       
       .terminal-title {
-        font-size: 16px;
+        font-size: clamp(14px, 4vw, 16px);
         font-weight: 700;
         text-shadow: 0 0 10px #00ff00;
         letter-spacing: 2px;
       }
       
       .terminal-status {
-        font-size: 11px;
+        font-size: clamp(10px, 3vw, 11px);
         color: #00ff00;
         opacity: 0.8;
       }
@@ -112,7 +122,8 @@
       
       .console-line {
         margin: 6px 0;
-        font-size: 12px;
+        font-size: clamp(10px, 2.5vw, 12px);
+        word-break: break-word;
       }
       
       .prompt {
@@ -128,7 +139,7 @@
       .output {
         color: #00aa00;
         margin: 4px 0;
-        font-size: 11px;
+        font-size: clamp(9px, 2.2vw, 11px);
       }
       
       .error {
@@ -148,8 +159,9 @@
         border-left: 2px solid #00ff00;
         padding: 10px 15px;
         margin: 10px 0;
-        font-size: 11px;
+        font-size: clamp(9px, 2vw, 11px);
         color: #00ff00;
+        overflow-x: auto;
       }
       
       .section-divider {
@@ -165,24 +177,24 @@
         margin-bottom: 10px;
         text-shadow: 0 0 10px #00ff00;
         letter-spacing: 1px;
-        font-size: 13px;
+        font-size: clamp(12px, 3vw, 13px);
       }
       
       .subsection {
-        margin-left: 20px;
+        margin-left: clamp(10px, 5vw, 20px);
         margin-top: 10px;
       }
       
       .server-button {
         display: block;
         margin: 10px 0;
-        padding: 12px 18px;
+        padding: clamp(10px, 3vw, 12px) clamp(12px, 4vw, 18px);
         background: linear-gradient(135deg, rgba(0, 255, 0, 0.08) 0%, rgba(0, 170, 0, 0.05) 100%);
         border: 1px solid #00ff00;
         color: #00ff00;
         text-decoration: none;
         border-radius: 2px;
-        font-size: 11px;
+        font-size: clamp(9px, 2.2vw, 11px);
         font-family: 'Courier Prime', monospace;
         font-weight: 700;
         transition: all 0.2s ease;
@@ -192,6 +204,7 @@
         letter-spacing: 0.5px;
         cursor: pointer;
         text-align: left;
+        word-break: break-word;
       }
       
       .server-button::before {
@@ -220,14 +233,18 @@
         text-shadow: 0 0 5px #00ff00;
       }
       
+      .server-button:active {
+        background: linear-gradient(135deg, rgba(0, 255, 0, 0.2) 0%, rgba(0, 170, 0, 0.15) 100%);
+      }
+      
       .server-button:hover::after {
         left: 100%;
       }
       
       .server-tag {
-        font-size: 9px;
+        font-size: clamp(8px, 1.8vw, 9px);
         display: inline-block;
-        margin-left: 10px;
+        margin-left: clamp(5px, 3vw, 10px);
         padding: 2px 6px;
         background: rgba(0, 255, 0, 0.1);
         border: 1px solid #00ff00;
@@ -238,7 +255,7 @@
       
       .stats-table {
         margin: 10px 0;
-        font-size: 11px;
+        font-size: clamp(9px, 2vw, 11px);
       }
       
       .stat-row {
@@ -246,6 +263,8 @@
         justify-content: space-between;
         padding: 4px 0;
         border-bottom: 1px dotted rgba(0, 255, 0, 0.3);
+        flex-wrap: wrap;
+        gap: 10px;
       }
       
       .stat-label {
@@ -262,10 +281,11 @@
         margin-top: 20px;
         padding-top: 12px;
         border-top: 1px solid #00ff00;
-        font-size: 10px;
+        font-size: clamp(8px, 1.8vw, 10px);
         color: #00ff00;
         opacity: 0.7;
         text-align: center;
+        line-height: 1.6;
       }
       
       .access-log {
@@ -273,14 +293,122 @@
         border: 1px solid rgba(0, 255, 0, 0.2);
         padding: 10px;
         margin: 10px 0;
-        font-size: 10px;
+        font-size: clamp(8px, 1.8vw, 10px);
         color: #00aa00;
       }
       
       .timestamp {
         color: #00ff00;
         opacity: 0.6;
-        font-size: 10px;
+        font-size: clamp(8px, 1.8vw, 10px);
+      }
+      
+      /* Mobile optimizations */
+      @media (max-width: 768px) {
+        body {
+          padding: 5px;
+          min-height: 100vh;
+        }
+        
+        .terminal-container {
+          padding: 15px;
+          border-radius: 2px;
+        }
+        
+        .terminal-header {
+          margin-bottom: 15px;
+          padding-bottom: 10px;
+        }
+        
+        .subsection {
+          margin-left: 10px;
+        }
+        
+        .section-divider {
+          margin: 12px 0;
+        }
+        
+        .code-block {
+          padding: 8px 12px;
+          margin: 8px 0;
+          font-size: 10px;
+        }
+        
+        .console-line {
+          margin: 5px 0;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        body {
+          padding: 3px;
+        }
+        
+        .terminal-container {
+          padding: 12px;
+          border: 1px solid #00ff00;
+          max-width: 100%;
+        }
+        
+        .terminal-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 5px;
+        }
+        
+        .terminal-title {
+          font-size: 13px;
+            letter-spacing: 1px;
+        }
+        
+        .terminal-status {
+          font-size: 10px;
+        }
+        
+        .server-button::before {
+          content: '> ';
+        }
+        
+        .server-button {
+          margin: 8px 0;
+          padding: 10px 12px;
+          font-size: 10px;
+        }
+        
+        .section-title {
+          font-size: 12px;
+          margin-top: 12px;
+          margin-bottom: 8px;
+        }
+        
+        .stats-table {
+          font-size: 10px;
+        }
+        
+        .stat-row {
+          flex-direction: column;
+          gap: 2px;
+        }
+        
+        .console-line {
+          margin: 4px 0;
+          font-size: 10px;
+        }
+        
+        .output {
+          font-size: 9px;
+        }
+        
+        .code-block {
+          padding: 8px;
+          font-size: 9px;
+          margin: 6px 0;
+        }
+        
+        .footer {
+          font-size: 9px;
+          margin-top: 15px;
+        }
       }
     </style>
   </head>
@@ -299,25 +427,25 @@
       </div>
       
       <div class="console-line output">
-        [+] System initialization started at 2026-07-01T16:06:57Z
+        [+] System initialization started
       </div>
       
       <div class="console-line output">
-        [+] Loading cryptographic libraries... OK
+        [+] Loading crypto libraries... OK
       </div>
       
       <div class="console-line output">
-        [+] Initializing secure connection pool... OK
+        [+] Secure pool initialized... OK
       </div>
       
       <div class="console-line output">
-        [+] Authentication protocols verified... OK
+        [+] Auth protocols verified... OK
       </div>
       
       <div class="code-block">
         $ uname -a<br>
-        Linux walnut-hq 5.15.0-elite #1 SMP x86_64 GNU/Linux<br>
-        Kernel: 5.15.0-elite | Arch: x86_64 | Status: HARDENED
+        Linux walnut-hq 5.15.0-elite #1 SMP x86_64<br>
+        Kernel: 5.15.0-elite | Status: HARDENED
       </div>
       
       <div class="section-divider"></div>
@@ -327,22 +455,22 @@
       <div class="stats-table">
         <div class="stat-row">
           <span class="stat-label">Operator:</span>
-          <span class="stat-value">WALNUT (Kurumi)</span>
+          <span class="stat-value">WALNUT</span>
         </div>
         <div class="stat-row">
-          <span class="stat-label">Expertise Level:</span>
+          <span class="stat-label">Expertise:</span>
           <span class="stat-value">ELITE - Class S</span>
         </div>
         <div class="stat-row">
-          <span class="stat-label">Systems Monitored:</span>
+          <span class="stat-label">Systems:</span>
           <span class="stat-value">427</span>
         </div>
         <div class="stat-row">
-          <span class="stat-label">Active Connections:</span>
-          <span class="stat-value">ENCRYPTED [•••••••]</span>
+          <span class="stat-label">Connections:</span>
+          <span class="stat-value">ENCRYPTED</span>
         </div>
         <div class="stat-row">
-          <span class="stat-label">Security Clearance:</span>
+          <span class="stat-label">Clearance:</span>
           <span class="stat-value">MAXIMUM</span>
         </div>
       </div>
@@ -353,22 +481,22 @@
       
       <div class="subsection">
         <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100" class="server-button">
-          Connect to Indian Server Instance
+          Indian Server
           <span class="server-tag">STABLE</span>
         </a>
         
         <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982" class="server-button">
-          Connect to Levithan Hunt Server 1
+          Levithan Hunt 1
           <span class="server-tag">ACTIVE</span>
         </a>
         
         <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435" class="server-button">
-          Connect to Levithan Hunt Server 2
+          Levithan Hunt 2
           <span class="server-tag">STABLE</span>
         </a>
         
         <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36" class="server-button">
-          Connect to US Server 1
+          US Server 1
           <span class="server-tag">OPTIMAL</span>
         </a>
       </div>
@@ -378,21 +506,21 @@
       <div class="section-title">[NETWORK_STATUS]</div>
       
       <div class="console-line output">
-        [+] All connections: SECURE & ENCRYPTED
+        [+] Connections: SECURE & ENCRYPTED
       </div>
       
       <div class="console-line output">
-        [+] Firewall Status: ACTIVE
+        [+] Firewall: ACTIVE
       </div>
       
       <div class="console-line output">
-        [+] Intrusion Detection: MONITORING
+        [+] IDS: MONITORING
       </div>
       
       <div class="access-log">
         <div class="timestamp">[2026-07-01 16:06:57] Access Granted</div>
-        <div class="timestamp">[2026-07-01 16:06:58] Connection established</div>
-        <div class="timestamp">[2026-07-01 16:06:59] Encryption verified</div>
+        <div class="timestamp">[2026-07-01 16:06:58] Connected</div>
+        <div class="timestamp">[2026-07-01 16:06:59] Verified</div>
       </div>
       
       <div class="console-line" style="margin-top: 15px;">
@@ -400,9 +528,9 @@
       </div>
       
       <div class="footer">
-        [SECURE] All traffic encrypted with AES-256-GCM | TLS 1.3<br>
-        [ALERT] Walnut - Elite Hacker | Mission: Information Specialist<br>
-        [STATUS] System Ready for Operations | Awaiting Command
+        [SECURE] AES-256-GCM | TLS 1.3<br>
+        [STATUS] Walnut - Elite Hacker<br>
+        [INFO] System Ready for Operations
       </div>
     </div>
   </body>
