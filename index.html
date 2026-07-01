@@ -1,45 +1,169 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Blox Fruits Multi-Server Launcher</title>
+    <title>NIKKE - Blox Fruits Private Servers</title>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
       body {
-        font-family: Arial, sans-serif;
-        background-color: #000000;
-        color: #ffffff;
+        font-family: 'Orbitron', sans-serif;
+        background: linear-gradient(135deg, #0a0e27 0%, #1a0033 50%, #0a0e27 100%);
+        background-attachment: fixed;
+        color: #00ffff;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
-        margin: 0;
-        flex-direction: column;
+        overflow: hidden;
+        position: relative;
       }
+      
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.05) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: -1;
+      }
+      
+      .container {
+        text-align: center;
+        z-index: 10;
+        animation: fadeIn 1s ease-in;
+      }
+      
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
       h1 {
-        margin-bottom: 20px;
+        font-size: 48px;
+        margin-bottom: 10px;
+        text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #ff00ff;
+        letter-spacing: 3px;
+        animation: glow 2s ease-in-out infinite;
       }
+      
+      .subtitle {
+        font-size: 14px;
+        color: #ff00ff;
+        margin-bottom: 40px;
+        text-shadow: 0 0 10px #ff00ff;
+        letter-spacing: 2px;
+      }
+      
+      @keyframes glow {
+        0%, 100% {
+          text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+        }
+        50% {
+          text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #ff00ff;
+        }
+      }
+      
+      .server-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+      }
+      
       a {
         display: block;
-        margin: 10px 0;
-        padding: 12px 24px;
-        background-color: #1d4ed8;
-        color: white;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+        color: #00ffff;
         text-decoration: none;
-        border-radius: 8px;
-        font-size: 18px;
-        transition: background-color 0.3s ease;
-        width: 300px;
+        border: 2px solid #00ffff;
+        border-radius: 0;
+        font-size: 16px;
+        font-weight: 700;
+        width: 350px;
         text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.1);
       }
+      
+      a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+      }
+      
       a:hover {
-        background-color: #2563eb;
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.3) 0%, rgba(255, 0, 255, 0.2) 100%);
+        border-color: #ff00ff;
+        color: #ff00ff;
+        box-shadow: 0 0 20px #00ffff, inset 0 0 20px rgba(255, 0, 255, 0.2);
+        transform: scale(1.05);
+      }
+      
+      a:hover::before {
+        left: 100%;
+      }
+      
+      .server-tag {
+        font-size: 12px;
+        display: inline-block;
+        margin-top: 5px;
+        padding: 4px 12px;
+        background: rgba(255, 0, 255, 0.2);
+        border: 1px solid #ff00ff;
+        border-radius: 20px;
+        color: #ff00ff;
       }
     </style>
   </head>
   <body>
-    <h1>Blox Fruits Private Servers</h1>
-    <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100">Join Indian Server</a>
-    <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982">Join Levithan Hunt Server 1 (INDIAN)</a>
-    <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435">Join Levithan Hunt Server 2 (US)</a>
-    <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36">Join US Server 1</a>
+    <div class="container">
+      <h1>⚔️ NIKKE LAUNCHER ⚔️</h1>
+      <div class="subtitle">GODDESS OF VICTORY: BLOX FRUITS</div>
+      
+      <div class="server-list">
+        <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100">
+          Join Indian Server
+          <div class="server-tag">REGION: INDIA</div>
+        </a>
+        <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982">
+          Join Levithan Hunt Server 1
+          <div class="server-tag">REGION: INDIA</div>
+        </a>
+        <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435">
+          Join Levithan Hunt Server 2
+          <div class="server-tag">REGION: US</div>
+        </a>
+        <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36">
+          Join US Server 1
+          <div class="server-tag">REGION: US</div>
+        </a>
+      </div>
+    </div>
   </body>
 </html>
