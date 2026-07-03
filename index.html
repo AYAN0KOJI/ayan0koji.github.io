@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#00ff00">
+    <meta name="description" content="Elite hacker terminal inspired by Walnut. Connect to Blox Fruits servers.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WALNUT">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230a0a0a' width='192' height='192'/><text x='50%' y='50%' font-size='120' fill='%2300ff00' text-anchor='middle' dy='.3em' font-family='monospace' font-weight='bold'>W</text></svg>">
+    <title>WALNUT - ELITE HACKER TERMINAL</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      
+      body {
+        font-family: 'Courier Prime', monospace;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 50%, #0a0a0a 100%);
+        background-attachment: fixed;
+        color: #00ff00;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+        line-height: 1.5;
+        padding: clamp(8px, 3vw, 20px);
+        gap: clamp(8px, 2vw, 15px);
+      }
+      
+      .side-panel {
+        display: none;
+        flex-direction: column;
+        width: clamp(80px, 12vw, 150px);
+        font-size: clamp(7px, 1.5vw, 9px);
+        opacity: 0.8;
+        border: 1px solid #00ff00;
+        padding: 10px;
+        box-shadow: 
+          0 0 10px #00ff00,
+          0 0 20px rgba(0, 255, 0, 0.4),
+          inset 0 0 10px rgba(0, 255, 0, 0.05);
+        border-radius: 2px;
+      }
+      
+      .side-panel-title {
+        color: #00ff00;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 1px dashed #00ff00;
+        padding-bottom: 5px;
+        text-shadow: 0 0 10px #00ff00, 0 0 20px rgba(0, 255, 0, 0.5);
+      }
+      
+      .panel-item {
+        margin: 4px 0;
+        padding: 4px;
+        border-left: 2px solid #00ff00;
+        padding-left: 6px;
+        text-shadow: 0 0 5px #00ff00;
+      }
+      
+      .panel-value {
+        color: #00aa00;
+        font-weight: 700;
+        text-shadow: 0 0 8px #00ff00;
+      }
+      
+      .data-stream {
+        font-size: clamp(6px, 1.2vw, 7px);
+        margin: 2px 0;
+        opacity: 0.6;
+        text-shadow: 0 0 5px #00ff00;
+      }
+      
+      @media (min-width: 1200px) {
+        .side-panel {
+          display: flex;
+        }
+      }
+      
+      @media (min-width: 1600px) {
+        .side-panel {
+          width: clamp(100px, 15vw, 180px);
+          font-size: clamp(8px, 1.8vw, 10px);
+        }
+      }
+      
+      .rain-container {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+      
+      .rain {
+        position: absolute;
+        color: #00ff00;
+        font-family: 'Courier Prime', monospace;
+        font-weight: 700;
+        opacity: 0.5;
+        text-shadow: 
+          0 0 5px #00ff00,
+          0 0 10px #00ff00,
+          0 0 15px rgba(0, 255, 0, 0.6);
+        font-size: clamp(10px, 1.5vw, 14px);
+      }
+      
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 255, 0, 0.02) 0px,
+          rgba(0, 255, 0, 0.02) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+        pointer-events: none;
+        animation: scanlines 8s linear infinite;
+        z-index: 1;
+      }
+      
+      @keyframes scanlines {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(10px);
+        }
+      }
+      
+      .terminal-container {
+        position: relative;
+        z-index: 10;
+        background: rgba(10, 10, 10, 0.95);
+        border: 2px solid #00ff00;
+        border-radius: 3px;
+        padding: clamp(12px, 5vw, 20px);
+        width: 100%;
+        max-width: 900px;
+        max-height: calc(100vh - clamp(16px, 10vw, 40px));
+        margin: 0 auto;
+        box-shadow: 
+          0 0 10px #00ff00,
+          0 0 20px #00ff00,
+          0 0 30px rgba(0, 255, 0, 0.5),
+          0 0 40px rgba(0, 255, 0, 0.3),
+          inset 0 0 20px rgba(0, 255, 0, 0.05),
+          inset 0 0 10px rgba(0, 255, 0, 0.02);
+        backdrop-filter: blur(5px);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      
+      /* Custom scrollbar styling */
+      .terminal-container::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      .terminal-container::-webkit-scrollbar-track {
+        background: rgba(0, 255, 0, 0.05);
+      }
+      
+      .terminal-container::-webkit-scrollbar-thumb {
+        background: #00ff00;
+        border-radius: 4px;
+        opacity: 0.6;
+        box-shadow: 0 0 5px #00ff00;
+      }
+      
+      .terminal-container::-webkit-scrollbar-thumb:hover {
+        opacity: 1;
+        box-shadow: 0 0 10px #00ff00;
+      }
+      
+      /* Firefox scrollbar */
+      .terminal-container {
+        scrollbar-color: #00ff00 rgba(0, 255, 0, 0.05);
+        scrollbar-width: thin;
+      }
+      
+      /* Custom scrollbar styling */
+      .terminal-container::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      .terminal-container::-webkit-scrollbar-track {
+        background: rgba(0, 255, 0, 0.05);
+      }
+      
+      .terminal-container::-webkit-scrollbar-thumb {
+        background: #00ff00;
+        border-radius: 4px;
+        opacity: 0.6;
+      }
+      
+      .terminal-container::-webkit-scrollbar-thumb:hover {
+        opacity: 1;
+      }
+      
+      /* Firefox scrollbar */
+      .terminal-container {
+        scrollbar-color: #00ff00 rgba(0, 255, 0, 0.05);
+        scrollbar-width: thin;
+      }
+      
+      .terminal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #00ff00;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      
+      .terminal-title {
+        font-size: clamp(14px, 4vw, 16px);
+        font-weight: 700;
+        text-shadow: 
+          0 0 5px #00ff00,
+          0 0 10px #00ff00,
+          0 0 20px #00ff00,
+          0 0 30px rgba(0, 255, 0, 0.5);
+        letter-spacing: 2px;
+        color: #00ff00;
+      }
+      
+      .terminal-status {
+        font-size: clamp(10px, 3vw, 11px);
+        color: #00ff00;
+        opacity: 0.8;
+        text-shadow: 0 0 10px #00ff00, 0 0 20px rgba(0, 255, 0, 0.6);
+      }
+      
+      .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #00ff00;
+        border-radius: 50%;
+        margin-right: 5px;
+        animation: pulse 1s infinite;
+        box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+      
+      .console-line {
+        margin: 6px 0;
+        font-size: clamp(10px, 2.5vw, 12px);
+        word-break: break-word;
+      }
+      
+      .prompt {
+        color: #00ff00;
+        font-weight: 700;
+        text-shadow: 0 0 8px #00ff00;
+      }
+      
+      .command {
+        color: #00ff00;
+        display: inline;
+        text-shadow: 0 0 5px #00ff00;
+      }
+      
+      .output {
+        color: #00aa00;
+        margin: 4px 0;
+        font-size: clamp(9px, 2.2vw, 11px);
+        text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+      }
+      
+      .error {
+        color: #ff0000;
+      }
+      
+      .info {
+        color: #00ff00;
+      }
+      
+      .warning {
+        color: #ffff00;
+      }
+      
+      .code-block {
+        background: rgba(0, 255, 0, 0.05);
+        border-left: 2px solid #00ff00;
+        padding: 10px 15px;
+        margin: 10px 0;
+        font-size: clamp(9px, 2vw, 11px);
+        color: #00ff00;
+        overflow-x: auto;
+        box-shadow: 
+          0 0 10px rgba(0, 255, 0, 0.2),
+          inset 0 0 10px rgba(0, 255, 0, 0.05);
+        text-shadow: 0 0 5px #00ff00;
+      }
+      
+      .section-divider {
+        border-top: 1px dashed #00ff00;
+        margin: 15px 0;
+        opacity: 0.5;
+      }
+      
+      .section-title {
+        color: #00ff00;
+        font-weight: 700;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        text-shadow: 
+          0 0 5px #00ff00,
+          0 0 10px #00ff00,
+          0 0 20px rgba(0, 255, 0, 0.6);
+        letter-spacing: 1px;
+        font-size: clamp(12px, 3vw, 13px);
+      }
+      
+      .subsection {
+        margin-left: clamp(10px, 5vw, 20px);
+        margin-top: 10px;
+      }
+      
+      .server-button {
+        display: block;
+        margin: 10px 0;
+        padding: clamp(8px, 2.5vw, 12px) clamp(10px, 3.5vw, 18px);
+        background: linear-gradient(135deg, rgba(0, 255, 0, 0.08) 0%, rgba(0, 170, 0, 0.05) 100%);
+        border: 1px solid #00ff00;
+        color: #00ff00;
+        text-decoration: none;
+        border-radius: 2px;
+        font-size: clamp(8px, 2vw, 11px);
+        font-family: 'Courier Prime', monospace;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        text-align: left;
+        word-break: break-word;
+        box-shadow: 
+          0 0 8px #00ff00,
+          0 0 15px rgba(0, 255, 0, 0.3),
+          inset 0 0 8px rgba(0, 255, 0, 0.1);
+        text-shadow: 0 0 5px #00ff00;
+      }
+      
+      .server-button::before {
+        content: '[LINK] ';
+        color: #00ff00;
+        opacity: 0.6;
+      }
+      
+      .server-button::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.15), transparent);
+        transition: left 0.4s ease;
+      }
+      
+      .server-button:hover {
+        background: linear-gradient(135deg, rgba(0, 255, 0, 0.15) 0%, rgba(0, 170, 0, 0.1) 100%);
+        box-shadow: 
+          0 0 20px #00ff00,
+          0 0 30px #00ff00,
+          0 0 40px rgba(0, 255, 0, 0.5),
+          inset 0 0 10px rgba(0, 255, 0, 0.1);
+        border-color: #00ff00;
+        text-shadow: 0 0 10px #00ff00, 0 0 20px rgba(0, 255, 0, 0.6);
+      }
+      
+      .server-button:active {
+        background: linear-gradient(135deg, rgba(0, 255, 0, 0.2) 0%, rgba(0, 170, 0, 0.15) 100%);
+      }
+      
+      .server-button:hover::after {
+        left: 100%;
+      }
+      
+      .server-tag {
+        font-size: clamp(8px, 1.8vw, 9px);
+        display: inline-block;
+        margin-left: clamp(5px, 3vw, 10px);
+        padding: 2px 6px;
+        background: rgba(0, 255, 0, 0.1);
+        border: 1px solid #00ff00;
+        border-radius: 1px;
+        color: #00ff00;
+        opacity: 0.7;
+        box-shadow: 0 0 8px #00ff00, 0 0 15px rgba(0, 255, 0, 0.3);
+        text-shadow: 0 0 5px #00ff00;
+      }
+      
+      .stats-table {
+        margin: 10px 0;
+        font-size: clamp(9px, 2vw, 11px);
+      }
+      
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px dotted rgba(0, 255, 0, 0.3);
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      
+      .stat-label {
+        color: #00ff00;
+        opacity: 0.8;
+        text-shadow: 0 0 5px #00ff00;
+      }
+      
+      .stat-value {
+        color: #00ff00;
+        font-weight: 700;
+        text-shadow: 0 0 8px #00ff00, 0 0 15px rgba(0, 255, 0, 0.4);
+      }
+      
+      .footer {
+        margin-top: 20px;
+        padding-top: 12px;
+        border-top: 1px solid #00ff00;
+        font-size: clamp(8px, 1.8vw, 10px);
+        color: #00ff00;
+        opacity: 0.7;
+        text-align: center;
+        line-height: 1.6;
+        text-shadow: 0 0 8px #00ff00, 0 0 15px rgba(0, 255, 0, 0.3);
+      }
+      
+      .access-log {
+        background: rgba(0, 255, 0, 0.03);
+        border: 1px solid rgba(0, 255, 0, 0.2);
+        padding: 10px;
+        margin: 10px 0;
+        font-size: clamp(8px, 1.8vw, 10px);
+        color: #00aa00;
+        box-shadow: 
+          0 0 10px rgba(0, 255, 0, 0.2),
+          inset 0 0 8px rgba(0, 255, 0, 0.05);
+      }
+      
+      .timestamp {
+        color: #00ff00;
+        opacity: 0.6;
+        font-size: clamp(8px, 1.8vw, 10px);
+        text-shadow: 0 0 5px #00ff00;
+      }
+      
+      .pwa-badge {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0, 255, 0, 0.1);
+        border: 1px solid #00ff00;
+        padding: 8px 12px;
+        border-radius: 2px;
+        font-size: clamp(9px, 2vw, 10px);
+        color: #00ff00;
+        z-index: 100;
+        cursor: pointer;
+        display: none;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      
+      .pwa-badge:hover {
+        background: rgba(0, 255, 0, 0.2);
+        box-shadow: 0 0 10px #00ff00;
+      }
+      
+      .pwa-badge.show {
+        display: block;
+        animation: slideIn 0.3s ease;
+      }
+      
+      @keyframes slideIn {
+        from {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      
+      /* Mobile optimizations */
+      @media (max-width: 768px) {
+        body {
+          padding: clamp(5px, 2vw, 15px);
+          align-items: flex-start;
+          padding-top: clamp(8px, 3vw, 15px);
+        }
+        
+        .terminal-container {
+          padding: clamp(10px, 4vw, 15px);
+          border-radius: 2px;
+          max-width: 100%;
+          margin: 0;
+        }
+        
+        .terminal-header {
+          margin-bottom: 15px;
+          padding-bottom: 10px;
+          gap: 8px;
+        }
+        
+        .terminal-title {
+          font-size: clamp(12px, 3vw, 15px);
+          letter-spacing: 1px;
+        }
+        
+        .terminal-status {
+          font-size: clamp(9px, 2.5vw, 10px);
+        }
+        
+        .subsection {
+          margin-left: clamp(8px, 3vw, 15px);
+        }
+        
+        .section-divider {
+          margin: clamp(10px, 2vw, 12px) 0;
+        }
+        
+        .section-title {
+          font-size: clamp(11px, 2.8vw, 12px);
+          margin-top: clamp(12px, 2.5vw, 15px);
+          margin-bottom: clamp(8px, 2vw, 10px);
+        }
+        
+        .server-button {
+          margin: clamp(8px, 2vw, 10px) 0;
+          padding: clamp(9px, 2.5vw, 11px) clamp(11px, 3vw, 15px);
+          font-size: clamp(8px, 2vw, 10px);
+        }
+        
+        .server-tag {
+          font-size: clamp(7px, 1.8vw, 8px);
+          margin-left: clamp(5px, 2vw, 8px);
+          padding: clamp(2px, 0.5vw, 3px) clamp(5px, 1.5vw, 6px);
+        }
+        
+        .code-block {
+          padding: clamp(8px, 2vw, 12px);
+          margin: clamp(8px, 2vw, 10px) 0;
+          font-size: clamp(8px, 1.8vw, 10px);
+        }
+        
+        .console-line {
+          margin: clamp(4px, 1.5vw, 6px) 0;
+          font-size: clamp(9px, 2.2vw, 11px);
+        }
+        
+        .stats-table {
+          font-size: clamp(8px, 1.9vw, 10px);
+        }
+        
+        .stat-row {
+          padding: clamp(8px, 2vw, 12px) 0;
+        }
+        
+        .access-log {
+          padding: clamp(8px, 2vw, 12px);
+          margin: clamp(8px, 2vw, 10px) 0;
+          font-size: clamp(7px, 1.8vw, 9px);
+        }
+        
+        .timestamp {
+          font-size: clamp(7px, 1.8vw, 9px);
+          margin: clamp(4px, 1vw, 6px) 0;
+        }
+        
+        .footer {
+          margin-top: clamp(15px, 3vw, 20px);
+          padding: clamp(10px, 2.5vw, 15px);
+          font-size: clamp(7px, 1.8vw, 9px);
+        }
+        
+        .pwa-badge {
+          bottom: clamp(10px, 2vw, 15px);
+          right: clamp(10px, 2vw, 15px);
+          padding: clamp(6px, 1.5vw, 10px) clamp(10px, 2vw, 15px);
+          font-size: clamp(8px, 1.8vw, 9px);
+        }
+      }
+      
+      @media (max-width: 480px) {
+        body {
+          padding: clamp(4px, 1.5vw, 10px);
+          padding-top: clamp(6px, 2vw, 12px);
+        }
+        
+        .terminal-container {
+          padding: clamp(8px, 3vw, 12px);
+          border: 1px solid #00ff00;
+          max-width: 100%;
+          box-shadow: 0 0 15px #00ff00;
+          margin: 0;
+          border-radius: 2px;
+        }
+        
+        .terminal-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: clamp(4px, 1.5vw, 6px);
+          margin-bottom: clamp(10px, 2vw, 12px);
+          padding-bottom: clamp(8px, 1.5vw, 10px);
+        }
+        
+        .terminal-title {
+          font-size: clamp(11px, 2.5vw, 13px);
+          letter-spacing: 1px;
+        }
+        
+        .terminal-status {
+          font-size: clamp(8px, 2vw, 9px);
+        }
+        
+        .section-title {
+          font-size: clamp(10px, 2.3vw, 11px);
+          margin-top: clamp(10px, 2vw, 12px);
+          margin-bottom: clamp(6px, 1.5vw, 8px);
+        }
+        
+        .subsection {
+          margin-left: clamp(6px, 2vw, 10px);
+          margin-top: clamp(6px, 1.5vw, 8px);
+        }
+        
+        .server-button::before {
+          content: '> ';
+        }
+        
+        .server-button {
+          margin: clamp(6px, 1.5vw, 8px) 0;
+          padding: clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px);
+          font-size: clamp(8px, 1.8vw, 9px);
+          text-align: left;
+          word-break: break-word;
+        }
+        
+        .server-tag {
+          font-size: clamp(6px, 1.5vw, 7px);
+          display: inline-block;
+          margin-left: clamp(4px, 1vw, 6px);
+          padding: clamp(1px, 0.5vw, 2px) clamp(4px, 1vw, 5px);
+          margin-top: clamp(4px, 1vw, 6px);
+        }
+        
+        .code-block {
+          padding: clamp(6px, 1.5vw, 10px);
+          margin: clamp(6px, 1.5vw, 8px) 0;
+          font-size: clamp(7px, 1.6vw, 8px);
+          border-left: 2px solid #00ff00;
+        }
+        
+        .section-divider {
+          margin: clamp(8px, 1.5vw, 10px) 0;
+          border-top: 1px dashed #00ff00;
+        }
+        
+        .console-line {
+          margin: clamp(3px, 1vw, 5px) 0;
+          font-size: clamp(8px, 1.8vw, 9px);
+          word-break: break-word;
+        }
+        
+        .output {
+          font-size: clamp(7px, 1.6vw, 8px);
+          margin: clamp(3px, 1vw, 4px) 0;
+        }
+        
+        .stats-table {
+          margin: clamp(8px, 2vw, 10px) 0;
+          font-size: clamp(8px, 1.8vw, 9px);
+        }
+        
+        .stat-row {
+          display: flex;
+          flex-direction: column;
+          gap: clamp(2px, 0.8vw, 4px);
+          padding: clamp(8px, 1.5vw, 10px) 0;
+          border-bottom: 1px dotted rgba(0, 255, 0, 0.3);
+        }
+        
+        .stat-label {
+          color: #00ff00;
+          opacity: 0.8;
+          font-size: clamp(7px, 1.6vw, 8px);
+        }
+        
+        .stat-value {
+          color: #00ff00;
+          font-weight: 700;
+          font-size: clamp(7px, 1.6vw, 8px);
+        }
+        
+        .access-log {
+          background: rgba(0, 255, 0, 0.03);
+          border: 1px solid rgba(0, 255, 0, 0.2);
+          padding: clamp(6px, 1.5vw, 10px);
+          margin: clamp(8px, 1.5vw, 10px) 0;
+          font-size: clamp(7px, 1.6vw, 8px);
+          border-radius: 2px;
+        }
+        
+        .timestamp {
+          color: #00ff00;
+          opacity: 0.6;
+          font-size: clamp(6px, 1.4vw, 7px);
+          margin: clamp(3px, 1vw, 5px) 0;
+          word-break: break-word;
+        }
+        
+        .footer {
+          margin-top: clamp(12px, 2.5vw, 15px);
+          padding: clamp(8px, 1.5vw, 12px);
+          font-size: clamp(6px, 1.4vw, 7px);
+          line-height: 1.4;
+        }
+        
+        .pwa-badge {
+          bottom: clamp(8px, 1.5vw, 12px);
+          right: clamp(8px, 1.5vw, 12px);
+          padding: clamp(6px, 1.2vw, 8px) clamp(8px, 1.5vw, 12px);
+          font-size: clamp(7px, 1.4vw, 8px);
+        }
+      }
+      
+      @media (max-width: 360px) {
+        body {
+          padding: 3px;
+          padding-top: 8px;
+        }
+        
+        .terminal-container {
+          padding: 8px;
+          border: 1px solid #00ff00;
+        }
+        
+        .terminal-header {
+          margin-bottom: 10px;
+          padding-bottom: 8px;
+        }
+        
+        .terminal-title {
+          font-size: 11px;
+        }
+        
+        .section-title {
+          font-size: 10px;
+          margin: 8px 0 6px 0;
+        }
+        
+        .server-button {
+          margin: 6px 0;
+          padding: 8px 10px;
+          font-size: 8px;
+        }
+        
+        .server-tag {
+          font-size: 6px;
+          padding: 1px 4px;
+        }
+        
+        .console-line {
+          font-size: 8px;
+        }
+        
+        .footer {
+          margin-top: 12px;
+          padding: 8px;
+          font-size: 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rain-container" id="rainContainer"></div>
+    <div class="side-panel">
+      <div class="side-panel-title">[NETWORK]</div>
+      <div class="panel-item">
+        Uptime: <span class="panel-value">99.8%</span>
+      </div>
+      <div class="panel-item">
+        Ping: <span class="panel-value">12ms</span>
+      </div>
+      <div class="panel-item">
+        Bandwidth: <span class="panel-value">↓985MB</span>
+      </div>
+      <div class="panel-item">
+        Bandwidth: <span class="panel-value">↑147MB</span>
+      </div>
+      
+      <div class="side-panel-title" style="margin-top: 15px;">[PROCESSES]</div>
+      <div class="data-stream">▓▒░ python -m ssh</div>
+      <div class="data-stream">▓▓░ nc -lvnp 4444</div>
+      <div class="data-stream">▓▓▓ scan_targets.sh</div>
+      <div class="data-stream">░░░ idle</div>
+      
+      <div class="side-panel-title" style="margin-top: 15px;">[MEMORY]</div>
+      <div class="data-stream">▓▓▓▓▓░░░░░ 56%</div>
+    </div>
+
+    <div class="terminal-container">
+      <div class="terminal-header">
+        <div class="terminal-title">[WALNUT_SECURE_SYSTEM_v7.3.2]</div>
+        <div class="terminal-status">
+          <span class="status-indicator"></span>SECURE
+        </div>
+      </div>
+      
+      <div class="console-line">
+        <span class="prompt">root@walnut-hq:~#</span>
+        <span class="command"> ./initialize_network.sh</span>
+      </div>
+      
+      <div class="console-line output">
+        [+] System initialization started
+      </div>
+      
+      <div class="console-line output">
+        [+] Loading crypto libraries... OK
+      </div>
+      
+      <div class="console-line output">
+        [+] Secure pool initialized... OK
+      </div>
+      
+      <div class="console-line output">
+        [+] Auth protocols verified... OK
+      </div>
+      
+      <div class="code-block">
+        $ uname -a<br>
+        Linux walnut-hq 5.15.0-elite #1 SMP x86_64<br>
+        Kernel: 5.15.0-elite | Status: HARDENED
+      </div>
+      
+      <div class="section-divider"></div>
+      
+      <div class="section-title">[SYSTEM_INFORMATION]</div>
+      
+      <div class="stats-table">
+        <div class="stat-row">
+          <span class="stat-label">Operator:</span>
+          <span class="stat-value">WALNUT</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Expertise:</span>
+          <span class="stat-value">ELITE - Class S</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Systems:</span>
+          <span class="stat-value">427</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Connections:</span>
+          <span class="stat-value">ENCRYPTED</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Clearance:</span>
+          <span class="stat-value">MAXIMUM</span>
+        </div>
+      </div>
+      
+      <div class="section-divider"></div>
+      
+      <div class="section-title">[AVAILABLE_TARGETS]</div>
+      
+      <div class="subsection">
+        <a href="roblox://placeID=2753915549&linkCode=48660609425784752173205530658100" class="server-button">
+          Indian Server
+          <span class="server-tag">STABLE</span>
+        </a>
+        
+        <a href="roblox://placeID=2753915549&linkCode=25054310949544631678358648443982" class="server-button">
+          Levithan Hunt 1
+          <span class="server-tag">ACTIVE</span>
+        </a>
+        
+        <a href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435" class="server-button">
+          Levithan Hunt 2
+          <span class="server-tag">STABLE</span>
+        </a>
+        
+        <a href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36" class="server-button">
+          US Server 1
+          <span class="server-tag">OPTIMAL</span>
+        </a>
+      </div>
+      
+      <div class="section-divider"></div>
+      
+      <div class="section-title">[NETWORK_STATUS]</div>
+      
+      <div class="console-line output">
+        [+] Connections: SECURE & ENCRYPTED
+      </div>
+      
+      <div class="console-line output">
+        [+] Firewall: ACTIVE
+      </div>
+      
+      <div class="console-line output">
+        [+] IDS: MONITORING
+      </div>
+      
+      <div class="access-log">
+        <div class="timestamp">[2026-07-01 16:06:57] Access Granted</div>
+        <div class="timestamp">[2026-07-01 16:06:58] Connected</div>
+        <div class="timestamp">[2026-07-01 16:06:59] Verified</div>
+      </div>
+      
+      <div class="console-line" style="margin-top: 15px;">
+        <span class="prompt">root@walnut-hq:~#</span>
+      </div>
+      
+      <div class="footer">
+        [SECURE] AES-256-GCM | TLS 1.3<br>
+        [STATUS] Walnut - Elite Hacker<br>
+        [INFO] System Ready for Operations
+      </div>
+    </div>
+
+    <div class="side-panel" style="text-align: right; border-left: none;">
+      <div class="side-panel-title">[THREATS]</div>
+      <div class="panel-item" style="border-left: none; border-right: 2px solid #00ff00; padding-left: auto; padding-right: 6px; text-align: right;">
+        Active: <span class="panel-value">0</span>
+      </div>
+      <div class="panel-item" style="border-left: none; border-right: 2px solid #00ff00; padding-left: auto; padding-right: 6px; text-align: right;">
+        Blocked: <span class="panel-value">847</span>
+      </div>
+      <div class="panel-item" style="border-left: none; border-right: 2px solid #00ff00; padding-left: auto; padding-right: 6px; text-align: right;">
+        Status: <span class="panel-value">SAFE</span>
+      </div>
+      
+      <div class="side-panel-title" style="margin-top: 15px;">[ACTIVE_PORTS]</div>
+      <div class="data-stream" style="text-align: right;">22   (SSH)</div>
+      <div class="data-stream" style="text-align: right;">443  (HTTPS)</div>
+      <div class="data-stream" style="text-align: right;">8080 (HTTP)</div>
+      <div class="data-stream" style="text-align: right;">4444 (Custom)</div>
+      
+      <div class="side-panel-title" style="margin-top: 15px;">[CPU]</div>
+      <div class="data-stream" style="text-align: right;">░░░▓▓▓▓▓░░ 67%</div>
+    </div>
+
+    <div class="pwa-badge" id="pwa-badge">
+      📱 Install App
+    </div>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then((reg) => {
+              console.log('Service Worker registered');
+            })
+            .catch((err) => {
+              console.log('Service Worker registration failed:', err);
+            });
+        });
+      }
+
+      let deferredPrompt;
+      const pwaBadge = document.getElementById('pwa-badge');
+
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+        pwaBadge.classList.add('show');
+      });
+
+      pwaBadge.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          pwaBadge.classList.remove('show');
+        }
+      });
+
+      window.addEventListener('appinstalled', () => {
+        pwaBadge.classList.remove('show');
+      });
+
+      // Matrix Rain Effect
+      const rainContainer = document.getElementById('rainContainer');
+      const characters = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+      
+      function createRain() {
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const leftWidth = windowWidth * 0.15;
+        const rightStart = windowWidth * 0.85;
+        
+        setInterval(() => {
+          // Left side rain
+          const leftRain = document.createElement('div');
+          leftRain.className = 'rain';
+          leftRain.textContent = characters[Math.floor(Math.random() * characters.length)];
+          leftRain.style.left = Math.random() * leftWidth + 'px';
+          leftRain.style.top = '-20px';
+          leftRain.style.animation = `fall ${Math.random() * 3 + 3}s linear forwards`;
+          rainContainer.appendChild(leftRain);
+          
+          // Right side rain
+          const rightRain = document.createElement('div');
+          rightRain.className = 'rain';
+          rightRain.textContent = characters[Math.floor(Math.random() * characters.length)];
+          rightRain.style.left = (rightStart + Math.random() * leftWidth) + 'px';
+          rightRain.style.top = '-20px';
+          rightRain.style.animation = `fall ${Math.random() * 3 + 3}s linear forwards`;
+          rainContainer.appendChild(rightRain);
+          
+          setTimeout(() => {
+            leftRain.remove();
+            rightRain.remove();
+          }, 6000);
+        }, 100);
+      }
+      
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fall {
+          to {
+            transform: translateY(100vh);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      createRain();
+    </script>
+  </body>
+</html>
