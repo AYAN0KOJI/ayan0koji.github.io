@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#00ff00" />
+    <meta name="description" content="WALNUT Secure System terminal experience" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="WALNUT" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%230a0a0a' width='192' height='192'/><text x='50%' y='50%' font-size='120' fill='%2300ff00' text-anchor='middle' dy='.3em' font-family='monospace' font-weight='bold'>W</text></svg>" />
+    <title>WALNUT - TERMINAL</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --accent: #00ff00;
+        --accent-2: #00aa00;
+        --bg: #050805;
+        --panel: rgba(8, 18, 8, 0.92);
+        --border: #00ff00;
+        --text: #d8ffd8;
+        --muted: #7be57b;
+        --scanner-speed: 2.3s;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; min-height: 100%; overflow: hidden; }
+      body {
+        font-family: 'Courier Prime', 'Courier New', monospace;
+        background:
+          radial-gradient(circle at 15% 15%, rgba(0,255,0,0.16), transparent 24%),
+          radial-gradient(circle at 85% 0%, rgba(0,255,0,0.10), transparent 26%),
+          radial-gradient(circle at 50% 100%, rgba(0,255,0,0.14), transparent 36%),
+          linear-gradient(135deg, #030604 0%, #08110c 45%, #020403 100%);
+        color: var(--text);
+        position: relative;
+        line-height: 1.5;
+        text-shadow: 0 0 1px rgba(0,255,0,0.12);
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+          repeating-linear-gradient(180deg, rgba(0,255,0,0.025), rgba(0,255,0,0.025) 1px, transparent 1px, transparent 3px),
+          linear-gradient(90deg, rgba(255,255,255,0.025), transparent 30%, transparent 70%, rgba(255,255,255,0.025));
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.95;
+      }
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at center, transparent 0 34%, rgba(0,255,0,0.06) 34% 42%, transparent 42% 100%);
+        mix-blend-mode: screen;
+        pointer-events: none;
+        z-index: 0;
+        animation: pulseGrid 7s ease-in-out infinite alternate;
+      }
+      #bgCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+      .scanline { position: fixed; inset: 0; background: linear-gradient(180deg, transparent, rgba(0,255,0,0.09), transparent); mix-blend-mode: screen; pointer-events: none; z-index: 1; animation: sweep var(--scanner-speed) linear infinite; opacity: 0.95; }
+      @keyframes sweep { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+      @keyframes pulseGrid { 0% { transform: scale(0.98); opacity: 0.7; } 100% { transform: scale(1.03); opacity: 1; } }
+      .app-shell { position: relative; z-index: 2; min-height: 100vh; display: flex; justify-content: center; gap: clamp(10px, 2vw, 20px); padding: clamp(10px, 2vw, 24px); align-items: stretch; opacity: 0; transform: translateY(8px); transition: opacity 0.6s ease, transform 0.6s ease; }
+      .app-shell.visible { opacity: 1; transform: translateY(0); }
+      .side-panel {
+        width: clamp(160px, 18vw, 230px); background: var(--panel); border: 1px solid var(--border); box-shadow: 0 0 24px rgba(0,255,0,0.32), 0 0 48px rgba(0,255,0,0.2), inset 0 0 24px rgba(0,255,0,0.08); border-radius: 3px; padding: 12px; display: flex; flex-direction: column; gap: 8px; align-self: flex-start; backdrop-filter: blur(8px); position: relative; overflow: hidden;
+      }
+      .side-panel::before, .terminal-container::before, .boot-shell::before {
+        content: ''; position: absolute; inset: 0; border: 1px solid rgba(0,255,0,0.18); border-radius: inherit; pointer-events: none; box-shadow: inset 0 0 18px rgba(0,255,0,0.08); opacity: 0.8;
+      }
+      .side-panel-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); border-bottom: 1px dashed rgba(0,255,0,0.35); padding-bottom: 5px; margin-top: 6px; text-shadow: 0 0 10px rgba(0,255,0,0.55), 0 0 26px rgba(0,255,0,0.28); }
+      .panel-item { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); }
+      .panel-value { color: var(--accent); text-shadow: 0 0 8px rgba(0,255,0,0.45); font-weight: 700; }
+      .data-stream { font-size: 0.72rem; color: var(--muted); opacity: 0.9; }
+      .visitor-grid { display: grid; gap: 4px; font-size: 0.72rem; color: var(--muted); }
+      .visitor-row { display: flex; justify-content: space-between; gap: 6px; border-bottom: 1px dotted rgba(0,255,0,0.2); padding-bottom: 4px; }
+      .terminal-container {
+        flex: 1; max-width: 1000px; min-width: 0; background: rgba(9,16,9,0.95); border: 1px solid var(--border); border-radius: 4px; box-shadow: 0 0 30px rgba(0,255,0,0.34), 0 0 60px rgba(0,255,0,0.2), inset 0 0 28px rgba(0,255,0,0.08); padding: clamp(12px, 2.5vw, 24px); display: flex; flex-direction: column; overflow: hidden; position: relative;
+      }
+      .terminal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid rgba(0,255,0,0.35); margin-bottom: 10px; gap: 8px; }
+      .terminal-title { font-size: clamp(0.95rem, 1.2vw, 1.1rem); font-weight: 700; letter-spacing: 0.18em; color: var(--accent); text-shadow: 0 0 12px rgba(0,255,0,0.6), 0 0 24px rgba(0,255,0,0.32), 0 0 36px rgba(0,255,0,0.18); }
+      .terminal-status { font-size: 0.74rem; color: var(--accent); display: flex; align-items: center; gap: 6px; text-shadow: 0 0 10px rgba(0,255,0,0.45); }
+      .terminal-status .online-label { display: inline-block; animation: onlinePulse 1.2s ease-in-out infinite; }
+      .status-indicator { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent), 0 0 20px rgba(0,255,0,0.8), 0 0 28px rgba(0,255,0,0.5); animation: onlinePulse 1.2s ease-in-out infinite; }
+      .server-section { margin: 10px 0 12px; padding: 10px; border: 1px solid rgba(0,255,0,0.35); background: rgba(0,255,0,0.05); box-shadow: inset 0 0 12px rgba(0,255,0,0.08), 0 0 16px rgba(0,255,0,0.16), 0 0 24px rgba(0,255,0,0.08); }
+      .server-list-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.16em; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; text-shadow: 0 0 10px rgba(0,255,0,0.48), 0 0 20px rgba(0,255,0,0.24); }
+      .server-button { display: block; margin: 8px 0; padding: 9px 12px; background: linear-gradient(135deg, rgba(0,255,0,0.12), rgba(0,170,0,0.08)); border: 1px solid rgba(0,255,0,0.6); color: var(--accent); text-decoration: none; border-radius: 2px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; box-shadow: 0 0 10px rgba(0,255,0,0.16), 0 0 20px rgba(0,255,0,0.10), inset 0 0 10px rgba(0,255,0,0.06); transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; }
+      .server-button:hover { transform: translateY(-1px); background: linear-gradient(135deg, rgba(0,255,0,0.18), rgba(0,170,0,0.14)); box-shadow: 0 0 16px rgba(0,255,0,0.28), 0 0 30px rgba(0,255,0,0.18), inset 0 0 12px rgba(0,255,0,0.1); }
+      .server-tag { display: inline-block; margin-left: 8px; padding: 2px 6px; border: 1px solid rgba(0,255,0,0.45); font-size: 0.68rem; color: var(--accent); background: rgba(0,255,0,0.08); box-shadow: 0 0 8px rgba(0,255,0,0.16), 0 0 16px rgba(0,255,0,0.08); animation: badgePulse 2.4s ease-in-out infinite; }
+      @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+      @keyframes onlinePulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.55; transform: scale(0.95); } }
+      @keyframes badgePulse { 0%, 100% { box-shadow: 0 0 8px rgba(0,255,0,0.16), 0 0 16px rgba(0,255,0,0.08); transform: scale(1); } 50% { box-shadow: 0 0 12px rgba(0,255,0,0.24), 0 0 22px rgba(0,255,0,0.14); transform: scale(1.03); } }
+      @keyframes bootSweep { to { transform: translateX(100%); } }
+      @keyframes bootGlitch { 0%, 100% { transform: translate(0, 0); opacity: 0; } 25% { transform: translate(-1px, 1px); opacity: 0.35; } 50% { transform: translate(1px, -1px); opacity: 0.2; } 75% { transform: translate(-1px, -1px); opacity: 0.15; } }
+      @keyframes bootFlicker { 0%, 100% { opacity: 1; text-shadow: 0 0 12px rgba(0,255,0,0.6), 0 0 24px rgba(0,255,0,0.32); } 50% { opacity: 0.8; text-shadow: 0 0 6px rgba(0,255,0,0.4), 0 0 14px rgba(0,255,0,0.2); } }
+      @keyframes bootLineIn { to { opacity: 1; transform: translateY(0); } }
+      @keyframes bootShellPulse { 0% { box-shadow: 0 0 30px rgba(0,255,0,0.32), 0 0 60px rgba(0,255,0,0.2), inset 0 0 24px rgba(0,255,0,0.08); } 100% { box-shadow: 0 0 44px rgba(0,255,0,0.42), 0 0 72px rgba(0,255,0,0.25), inset 0 0 30px rgba(0,255,0,0.1); } }
+      .terminal-output { flex: 0 1 auto; min-height: 220px; max-height: clamp(220px, 40vh, 330px); overflow-y: auto; padding: 10px 12px; margin-bottom: 12px; border: 1px solid rgba(0,255,0,0.24); border-radius: 3px; background: rgba(0,255,0,0.035); box-shadow: inset 0 0 14px rgba(0,255,0,0.06); scroll-behavior: smooth; }
+      .terminal-output::-webkit-scrollbar { width: 7px; }
+      .terminal-output::-webkit-scrollbar-thumb { background: rgba(0,255,0,0.35); border-radius: 999px; }
+      .console-line { margin: 6px 0; font-size: clamp(0.8rem, 1.2vw, 0.95rem); word-break: break-word; }
+      .prompt { color: var(--accent); font-weight: 700; text-shadow: 0 0 10px rgba(0,255,0,0.56), 0 0 20px rgba(0,255,0,0.3); }
+      .command { color: var(--accent); text-shadow: 0 0 10px rgba(0,255,0,0.46), 0 0 18px rgba(0,255,0,0.24); }
+      .output { color: var(--muted); text-shadow: 0 0 8px rgba(0,255,0,0.2), 0 0 16px rgba(0,255,0,0.1); }
+      .error { color: #ff7a7a; text-shadow: 0 0 8px rgba(255, 122, 122, 0.28), 0 0 16px rgba(255, 122, 122, 0.16); }
+      .warning { color: #ffd76a; text-shadow: 0 0 8px rgba(255, 215, 106, 0.28), 0 0 16px rgba(255, 215, 106, 0.16); }
+      .banner { color: var(--accent); text-shadow: 0 0 12px rgba(0,255,0,0.32), 0 0 24px rgba(0,255,0,0.2), 0 0 36px rgba(0,255,0,0.12); }
+      .input-line { display: flex; align-items: center; gap: 4px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,255,0,0.25); }
+      .input-shell { position: relative; flex: 1; min-height: 1.4em; display: flex; align-items: center; }
+      #terminalInput { position: absolute; inset: 0; width: 100%; border: 0; outline: none; background: transparent; color: transparent; font: inherit; caret-color: transparent; z-index: 2; }
+      .input-display { position: relative; z-index: 1; min-height: 1.2em; color: var(--accent); font: inherit; font-weight: 700; white-space: pre; overflow: hidden; text-overflow: ellipsis; }
+      .input-display .cursor { display: inline-block; margin-left: 1px; color: var(--accent); font-weight: 700; text-shadow: 0 0 10px rgba(0,255,0,0.45); animation: blink 1.15s steps(2, start) infinite; }
+      .footer { margin-top: 12px; font-size: 0.72rem; color: var(--muted); text-align: center; }
+      .boot-overlay { position: fixed; inset: 0; z-index: 10; background: radial-gradient(circle at center, rgba(0,40,0,0.95) 0%, #020503 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+      .boot-overlay.hidden { opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
+      .boot-shell { width: min(620px, 100%); background: rgba(3,10,3,0.95); border: 1px solid var(--border); box-shadow: 0 0 30px rgba(0,255,0,0.32), 0 0 60px rgba(0,255,0,0.2), inset 0 0 24px rgba(0,255,0,0.08); padding: 24px; border-radius: 6px; position: relative; overflow: hidden; animation: bootShellPulse 2.6s ease-in-out infinite alternate; }
+      .boot-shell::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(0,255,0,0.08), transparent); transform: translateX(-100%); animation: bootSweep 1.4s linear infinite; pointer-events: none; }
+      .boot-shell::after { content: ''; position: absolute; inset: 2px; border: 1px solid rgba(0,255,0,0.12); mix-blend-mode: screen; animation: bootGlitch 2.2s steps(2, end) infinite; pointer-events: none; }
+      .boot-title { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.16em; color: var(--accent); margin-bottom: 10px; }
+      .boot-status { color: var(--muted); font-size: 0.85rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.18em; }
+      .boot-progress { height: 10px; border: 1px solid rgba(0,255,0,0.35); overflow: hidden; background: rgba(0,255,0,0.06); margin-bottom: 12px; position: relative; }
+      .boot-progress > div { height: 100%; width: 0; background: linear-gradient(90deg, rgba(0,255,0,0.9), rgba(116,255,116,0.9)); transition: width 0.25s ease; box-shadow: 0 0 10px rgba(0,255,0,0.4); }
+      .boot-output { min-height: 120px; color: var(--muted); font-size: 0.9rem; white-space: pre-wrap; font-family: Consolas, 'Courier New', monospace; letter-spacing: 0.04em; }
+      .boot-output .boot-line { opacity: 0; transform: translateY(4px); animation: bootLineIn 0.2s ease forwards; margin: 2px 0; }
+      .boot-output .boot-line .prompt { color: var(--accent); margin-right: 6px; }
+      .boot-output .boot-line .status { color: var(--accent); }
+      .boot-hint { margin-top: 12px; font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+      .achievement-popup { position: fixed; right: 18px; bottom: 18px; z-index: 8; background: rgba(0,20,0,0.95); border: 1px solid var(--accent); color: var(--accent); padding: 12px 14px; border-radius: 3px; box-shadow: 0 0 18px rgba(0,255,0,0.24), 0 0 36px rgba(0,255,0,0.18), inset 0 0 12px rgba(0,255,0,0.08); transform: translateY(16px); opacity: 0; pointer-events: none; transition: all 0.3s ease; max-width: min(320px, calc(100vw - 24px)); }
+      .achievement-popup.show { opacity: 1; transform: translateY(0); }
+      .pwa-badge { position: fixed; bottom: 14px; right: 14px; z-index: 9; border: 1px solid var(--accent); padding: 8px 10px; border-radius: 3px; background: rgba(0,20,0,0.88); color: var(--accent); cursor: pointer; display: none; font-size: 0.74rem; box-shadow: 0 0 10px rgba(0,255,0,0.18), 0 0 24px rgba(0,255,0,0.12); }
+      .pwa-badge.show { display: inline-block; }
+      @media (max-width: 980px) { .app-shell { flex-direction: column; align-items: stretch; } .side-panel { width: 100%; order: 2; flex-direction: row; flex-wrap: wrap; gap: 10px; } .side-panel > * { flex: 1 1 140px; } }
+      @media (max-width: 640px) { body { overflow: auto; } .app-shell { min-height: auto; padding: 8px; } .terminal-container { padding: 12px; } .terminal-header { flex-direction: column; align-items: flex-start; } .side-panel { flex-direction: column; } }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+    </style>
+  </head>
+  <body>
+    <canvas id="bgCanvas" aria-hidden="true"></canvas>
+    <div class="scanline" aria-hidden="true"></div>
+    <div id="bootOverlay" class="boot-overlay" role="dialog" aria-live="polite">
+      <div class="boot-shell">
+        <div class="boot-title">[WALNUT_SECURE_SYSTEM]</div>
+        <div class="boot-status" id="bootStatus">INITIALIZING</div>
+        <div class="boot-progress"><div id="bootProgressBar"></div></div>
+        <div class="boot-output" id="bootOutput"></div>
+        <div class="boot-hint">Press Enter to skip boot</div>
+      </div>
+    </div>
+    <div id="appShell" class="app-shell" hidden>
+      <aside class="side-panel" aria-label="System status">
+        <div class="side-panel-title">[SYSTEM]</div>
+        <div class="panel-item">Time <span class="panel-value" id="liveClock">--:--</span></div>
+        <div class="panel-item">Date <span class="panel-value" id="dateWidget">--</span></div>
+        <div class="panel-item">Uptime <span class="panel-value" id="uptimeWidget">00:00</span></div>
+        <div class="side-panel-title">[VISITOR]</div>
+        <div id="visitorInfo" class="visitor-grid"></div>
+      </aside>
+      <main class="terminal-container">
+        <div class="terminal-header">
+          <div class="terminal-title">[WALNUT_SECURE_SYSTEM_v8.0]</div>
+          <div class="terminal-status"><span class="status-indicator"></span><span class="online-label">ONLINE</span></div>
+        </div>
+        <div class="terminal-output" id="terminalOutput" tabindex="0"></div>
+        <div class="server-section" aria-label="Available servers">
+          <div class="server-list-title">[AVAILABLE_TARGETS]</div>
+          <a class="server-button" href="roblox://placeID=2753915549&linkCode=90897081097256601752444059555031">Indian Server <span class="server-tag">STABLE</span></a>
+          <a class="server-button" href="roblox://placeID=2753915549&linkCode=13743731886624867803305735376588">Leviathan Hunt 1 <span class="server-tag">ACTIVE</span></a>
+          <a class="server-button" href="roblox://placeID=2753915549&linkCode=59746807593058752988626036383435">Leviathan Hunt 2 <span class="server-tag">STABLE</span></a>
+          <a class="server-button" href="roblox://placeID=2753915549&linkCode=615402995f9dad4ca6a7c3d5faa98d36">US Server 1 <span class="server-tag">OPTIMAL</span></a>
+        </div>
+        <div class="input-line">
+          <span class="prompt">root@walnut-hq:~#</span>
+          <div class="input-shell">
+            <input id="terminalInput" autocomplete="off" spellcheck="false" aria-label="Terminal command input" />
+            <div id="inputDisplay" class="input-display" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="footer">[SECURE] AES-256-GCM • LOCAL ONLY • PRESS TAB FOR COMPLETION</div>
+      </main>
+      <aside class="side-panel" aria-label="Network overview">
+        <div class="side-panel-title">[NETWORK]</div>
+        <div class="panel-item">Mode <span class="panel-value" id="networkMode">LOCAL</span></div>
+        <div class="panel-item">Latency <span class="panel-value" id="latencyValue">--</span></div>
+        <div class="panel-item">Access <span class="panel-value" id="accessValue">GRANTED</span></div>
+        <div class="side-panel-title">[COMMANDS]</div>
+        <div class="data-stream">help • about • status</div>
+        <div class="data-stream">servers • mission • projects</div>
+        <div class="data-stream">pwd • ls • tree • cd • cat</div>
+        <div class="data-stream">achievements • scanner on/off</div>
+      </aside>
+    </div>
+    <div class="achievement-popup" id="achievementPopup" role="status" aria-live="polite"></div>
+    <div class="pwa-badge" id="pwa-badge">📱 Install App</div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js').catch((err) => console.warn('Service worker registration failed', err));
+        });
+      }
+      const bootOverlay = document.getElementById('bootOverlay');
+      const bootOutput = document.getElementById('bootOutput');
+      const bootProgressBar = document.getElementById('bootProgressBar');
+      const bootStatus = document.getElementById('bootStatus');
+      const appShell = document.getElementById('appShell');
+      const terminalOutput = document.getElementById('terminalOutput');
+      const terminalInput = document.getElementById('terminalInput');
+      const inputDisplay = document.getElementById('inputDisplay');
+      const achievementPopup = document.getElementById('achievementPopup');
+      const pwaBadge = document.getElementById('pwa-badge');
+      const visitorInfo = document.getElementById('visitorInfo');
+      let deferredPrompt;
+      let bootSkipped = false;
+      const bootMessages = [
+        { prompt: 'root@walnut:~#', text: 'systemctl start secure-shell' },
+        { prompt: 'root@walnut:~#', text: 'networkd --init --quiet' },
+        { prompt: 'root@walnut:~#', text: 'fwctl --allow local' },
+        { prompt: 'root@walnut:~#', text: 'crypto verify --stack' },
+        { prompt: 'root@walnut:~#', text: 'shell --load interface' },
+        { prompt: 'root@walnut:~#', text: 'welcome operator' }
+      ];
+      const bootStatusVariants = ['INITIALIZING', 'AUTHENTICATING', 'ESTABLISHING LINK', 'SYNCING NODES', 'LOADING CORE', 'READY'];
+      function sleep(ms) { return new Promise((resolve) => window.setTimeout(resolve, ms)); }
+      function typeIntoBoot(message) { return new Promise((resolve) => { const line = document.createElement('div'); line.className = 'boot-line'; const prompt = document.createElement('span'); prompt.className = 'prompt'; prompt.textContent = message.prompt; const status = document.createElement('span'); status.className = 'status'; line.appendChild(prompt); line.appendChild(status); bootOutput.appendChild(line); let current = ''; let index = 0; const timer = window.setInterval(() => { current += message.text.charAt(index); status.textContent = current; index += 1; if (index >= message.text.length) { window.clearInterval(timer); status.textContent = message.text; resolve(); } }, 16); }); }
+      async function runBootSequence() {
+        if (sessionStorage.getItem('walnutBootSeen') === '1' || bootSkipped) { finishBoot(); return; }
+        bootOverlay.hidden = false; appShell.hidden = true; bootOutput.textContent = '';
+        bootOutput.innerHTML = '';
+        for (let i = 0; i < bootMessages.length; i += 1) {
+          bootStatus.textContent = `${bootStatusVariants[i] || 'READY'} • BOOT ${i + 1}/${bootMessages.length}`;
+          await typeIntoBoot(bootMessages[i]);
+          bootProgressBar.style.width = `${((i + 1) / bootMessages.length) * 100}%`;
+          await sleep(180);
+        }
+        sessionStorage.setItem('walnutBootSeen', '1');
+        finishBoot();
+      }
+      function finishBoot() {
+        bootStatus.textContent = 'READY';
+        bootProgressBar.style.width = '100%';
+        appShell.hidden = false;
+        requestAnimationFrame(() => appShell.classList.add('visible'));
+        bootOverlay.classList.add('hidden');
+        setTimeout(() => { bootOverlay.style.display = 'none'; }, 700);
+        terminalInput.focus();
+        populateTerminal();
+        initWidgets();
+        renderVisitorInfo();
+        initCanvas();
+      }
+      function skipBoot() { if (bootOverlay.style.display === 'none') return; bootSkipped = true; bootStatus.textContent = 'SKIPPED'; bootProgressBar.style.width = '100%'; finishBoot(); }
+      window.addEventListener('keydown', (event) => { if (bootOverlay.style.display !== 'none' && (event.key === 'Enter' || event.key === 'Escape')) { event.preventDefault(); skipBoot(); } });
+      function appendLine(text, type = 'output') { const line = document.createElement('div'); line.className = `console-line ${type}`; line.textContent = text; terminalOutput.appendChild(line); terminalOutput.scrollTop = terminalOutput.scrollHeight; }
+      function appendPrompt(command) { const line = document.createElement('div'); line.className = 'console-line'; line.innerHTML = `<span class="prompt">root@walnut-hq:~#</span> <span class="command">${escapeHtml(command)}</span>`; terminalOutput.appendChild(line); terminalOutput.scrollTop = terminalOutput.scrollHeight; }
+      function escapeHtml(value) { return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+      function populateTerminal() { appendLine('WALNUT Secure System boot complete.', 'banner'); appendLine('Type help to see available commands.', 'output'); }
+      function syncInputDisplay() { inputDisplay.innerHTML = `${escapeHtml(terminalInput.value)}<span class="cursor" aria-hidden="true">█</span>`; }
+      function startInputCursor() { clearInterval(syncInputDisplay._timer); syncInputDisplay._timer = setInterval(() => { const cursor = inputDisplay.querySelector('.cursor'); if (cursor) { cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0'; } }, 700); }
+      function stopInputCursor() { clearInterval(syncInputDisplay._timer); const cursor = inputDisplay.querySelector('.cursor'); if (cursor) cursor.style.opacity = '1'; }
+      terminalInput.addEventListener('input', syncInputDisplay);
+      terminalInput.addEventListener('focus', () => { syncInputDisplay(); startInputCursor(); });
+      terminalInput.addEventListener('blur', stopInputCursor);
+      const state = { history: [], historyIndex: 0, currentDir: '/', achievements: new Set(JSON.parse(localStorage.getItem('walnutAchievements') || '[]')), developerMode: false };
+      const fs = { type: 'dir', children: { home: { type: 'dir', children: { 'readme.txt': { type: 'file', content: 'Welcome to WALNUT Secure System. The city is listening.' }, 'notes.txt': { type: 'file', content: 'Operator notes: keep the terminal warm.' } } }, logs: { type: 'dir', children: { 'boot.log': { type: 'file', content: 'Boot sequence completed successfully.' }, 'network.log': { type: 'file', content: 'Connections verified. Traffic stable.' }, 'firewall.log': { type: 'file', content: 'Firewall rules active. No breaches detected.' } } }, missions: { type: 'dir', children: { 'daily.txt': { type: 'file', content: 'Monitor gateway traffic, update local status.' }, 'leviathan.txt': { type: 'file', content: 'Leviathan remains dormant. Observe and report.' } } }, etc: { type: 'dir', children: { 'walnut.txt': { type: 'file', content: 'Walnut Secure System v8.0. Local only.' }, 'projects.txt': { type: 'file', content: 'Project 01: shell. Project 02: network.' }, 'contact.txt': { type: 'file', content: 'Contact: secure@walnut-hq.local' } } }, 'readme.txt': { type: 'file', content: 'This is the root banner of the WALNUT terminal.' }, 'walnut.txt': { type: 'file', content: 'The city is still alive. Keep your hands steady.' }, 'projects.txt': { type: 'file', content: 'Project Leviathan • Project Cipher • Project Bloom' }, 'contact.txt': { type: 'file', content: 'Contact: root@walnut-hq' }, 'boot.log': { type: 'file', content: 'Boot cycle 8.0' }, 'network.log': { type: 'file', content: 'Bandwidth: stable.' }, 'firewall.log': { type: 'file', content: 'Firewalls at max confidence.' }, 'daily.txt': { type: 'file', content: 'Stay ready and stay silent.' }, 'leviathan.txt': { type: 'file', content: 'Leviathan watchlist: active but quiet.' } } };
+      function getNode(path) { const normalized = normalizePath(path); let node = fs; const parts = normalized.split('/').filter(Boolean); for (const part of parts) { if (!node.children || !node.children[part]) return null; node = node.children[part]; } return node; }
+      function normalizePath(input) { if (!input || input === '.') return state.currentDir; if (input === '/') return '/'; const base = state.currentDir === '/' ? '' : state.currentDir; const raw = input.startsWith('/') ? input : `${base}/${input}`; const parts = raw.split('/').filter(Boolean); const stack = []; for (const part of parts) { if (part === '..') { stack.pop(); } else if (part !== '.') { stack.push(part); } } return `/${stack.join('/')}` || '/'; }
+      function formatPath(path) { return path === '/' ? '/' : path; }
+      function listDirectory(path) { const node = getNode(path); if (!node || node.type !== 'dir') return null; return Object.keys(node.children || {}).sort(); }
+      function saveAchievements() { localStorage.setItem('walnutAchievements', JSON.stringify([...state.achievements])); }
+      function unlockAchievement(name, message) { if (state.achievements.has(name)) { appendLine(`Achievement already unlocked: ${name}`, 'output'); return; } state.achievements.add(name); saveAchievements(); showAchievementPopup(message); appendLine(`Achievement unlocked: ${message}`, 'banner'); }
+      function showAchievementPopup(message) { achievementPopup.innerHTML = `<strong>ACHIEVEMENT</strong><br>${message}`; achievementPopup.classList.add('show'); clearTimeout(showAchievementPopup._timer); showAchievementPopup._timer = setTimeout(() => achievementPopup.classList.remove('show'), 2200); }
+      function runCommand(rawCommand) { const command = rawCommand.trim(); if (!command) return; appendPrompt(command); state.history.push(command); state.historyIndex = state.history.length; const [base, ...args] = command.split(/\s+/); const normalized = base.toLowerCase(); switch (normalized) { case 'help': appendLine('Available commands: help, about, status, servers, projects, mission, whoami, clear, contact, pwd, ls, tree, cd, cat, achievements, scanner, konami, developer, walnut, jrwalnut, kiyotaka, lycoris, matrix, coffee'); break; case 'about': appendLine('WALNUT Secure System is a local-only terminal experience built to feel like an elite cyber command shell.'); break; case 'status': appendLine('Status: Secure. Network stable. Operator online.'); break; case 'servers': appendLine('Indian Server • Leviathan Hunt 1 • Leviathan Hunt 2 • US Server 1'); break; case 'projects': appendLine('Projects: Leviathan • Cipher • Bloom'); break; case 'mission': appendLine('Mission: maintain access, monitor traffic, and keep the system hidden.'); break; case 'whoami': appendLine('root'); break; case 'contact': appendLine('Contact: secure@walnut-hq.local'); break; case 'clear': terminalOutput.innerHTML = ''; break; case 'pwd': appendLine(formatPath(state.currentDir)); break; case 'ls': { const entries = listDirectory(state.currentDir); if (!entries) appendLine('No such directory.', 'error'); else appendLine(entries.join('  '), 'output'); break; } case 'tree': { const entries = listDirectory(state.currentDir); if (!entries) appendLine('No such directory.', 'error'); else appendLine(entries.join('  '), 'output'); break; } case 'cd': { const target = args[0] || '/'; const next = normalizePath(target); const node = getNode(next); if (!node || node.type !== 'dir') appendLine('No such directory.', 'error'); else { state.currentDir = next; appendLine(`Changed to ${formatPath(next)}`); } break; } case 'cat': { const target = args[0]; if (!target) { appendLine('Usage: cat <file>', 'warning'); break; } const path = normalizePath(target); const node = getNode(path); if (!node || node.type !== 'file') appendLine('File not found.', 'error'); else appendLine(node.content, 'output'); break; } case 'achievements': { const unlocked = [...state.achievements]; appendLine(`Unlocked achievements: ${unlocked.length > 0 ? unlocked.join(', ') : 'none'}`); appendLine('Hidden commands: jrwalnut, kiyotaka, lycoris, matrix, coffee, sudo rm -rf /'); break; } case 'scanner': { if (args[0] === 'off') { document.querySelector('.scanline').style.opacity = '0'; appendLine('Scanner disabled.', 'output'); } else if (args[0] === 'on') { document.querySelector('.scanline').style.opacity = '0.8'; appendLine('Scanner enabled.', 'output'); } else appendLine('Scanner enabled.', 'output'); break; } case 'jrwalnut': unlockAchievement('jrwalnut', 'JR WALNUT accessed the hidden route.'); break; case 'kiyotaka': unlockAchievement('kiyotaka', 'Kiyotaka alias confirmed.'); break; case 'lycoris': unlockAchievement('lycoris', 'Lycoris protocol engaged.'); break; case 'matrix': unlockAchievement('matrix', 'Matrix overlay invoked.'); break; case 'coffee': unlockAchievement('coffee', 'Coffee break accepted.'); break; case 'sudo': if (args[0] === 'rm' && args[1] === '-rf' && args[2] === '/') { unlockAchievement('sudo-rm', 'Root access attempted.'); appendLine('sudo rm -rf / denied. The system remains intact.', 'warning'); } else { appendLine('Unknown sudo command.', 'error'); } break; case 'konami': appendLine('Konami sequence accepted. The terminal flickers with confidence.', 'banner'); break; case 'developer': state.developerMode = !state.developerMode; appendLine(state.developerMode ? 'Developer mode enabled.' : 'Developer mode disabled.', 'banner'); break; case 'walnut': appendLine('WALNUT standing by.', 'banner'); break; default: appendLine(`Command not found: ${base}`, 'error'); break; } }
+      terminalInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); runCommand(terminalInput.value); terminalInput.value = ''; syncInputDisplay(); } else if (event.key === 'ArrowUp') { event.preventDefault(); if (state.historyIndex > 0) { state.historyIndex -= 1; terminalInput.value = state.history[state.historyIndex] || ''; syncInputDisplay(); } } else if (event.key === 'ArrowDown') { event.preventDefault(); if (state.historyIndex < state.history.length) { state.historyIndex += 1; terminalInput.value = state.history[state.historyIndex] || ''; syncInputDisplay(); } else { terminalInput.value = ''; syncInputDisplay(); } } else if (event.key === 'Tab') { event.preventDefault(); const value = terminalInput.value.trim(); const commands = ['help','about','status','servers','projects','mission','whoami','clear','contact','pwd','ls','tree','cd','cat','achievements','scanner','konami','developer','walnut','jrwalnut','kiyotaka','lycoris','matrix','coffee']; const matches = commands.filter((entry) => entry.startsWith(value.toLowerCase())); if (matches.length === 1) { terminalInput.value = matches[0]; syncInputDisplay(); } } });
+      function initWidgets() { const clock = document.getElementById('liveClock'); const dateWidget = document.getElementById('dateWidget'); const uptimeWidget = document.getElementById('uptimeWidget'); const latencyValue = document.getElementById('latencyValue'); const accessValue = document.getElementById('accessValue'); const networkMode = document.getElementById('networkMode'); const startedAt = Date.now(); function update() { const now = new Date(); clock.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); dateWidget.textContent = now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }); const secs = Math.floor((Date.now() - startedAt) / 1000); const hours = String(Math.floor(secs / 3600)).padStart(2, '0'); const minutes = String(Math.floor(secs / 60) % 60).padStart(2, '0'); uptimeWidget.textContent = `${hours}:${minutes}`; const connection = navigator.connection || {}; latencyValue.textContent = connection.rtt ? `${connection.rtt}ms` : '12ms'; accessValue.textContent = navigator.onLine ? 'GRANTED' : 'OFFLINE'; networkMode.textContent = connection.effectiveType ? connection.effectiveType.toUpperCase() : 'LOCAL'; } update(); setInterval(update, 1000); }
+      function renderVisitorInfo() { const browser = navigator.userAgentData?.brands?.map((item) => item.brand).join(' ') || navigator.userAgent; const os = navigator.userAgentData?.platform || navigator.platform || 'Unknown'; const screen = `${window.screen.width}x${window.screen.height}`; const language = navigator.language || 'en'; const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown'; const connection = navigator.connection || {}; const online = navigator.onLine ? 'Online' : 'Offline'; visitorInfo.innerHTML = `<div class="visitor-row"><span>Browser</span><span>${escapeHtml(browser)}</span></div><div class="visitor-row"><span>OS</span><span>${escapeHtml(os)}</span></div><div class="visitor-row"><span>Screen</span><span>${escapeHtml(screen)}</span></div><div class="visitor-row"><span>Language</span><span>${escapeHtml(language)}</span></div><div class="visitor-row"><span>Timezone</span><span>${escapeHtml(timezone)}</span></div><div class="visitor-row"><span>Connection</span><span>${escapeHtml(connection.effectiveType || 'Unknown')}</span></div><div class="visitor-row"><span>Status</span><span>${escapeHtml(online)}</span></div>`; }
+      const canvas = document.getElementById('bgCanvas'); const ctx = canvas.getContext('2d'); let nodes = []; let mouse = { x: 0, y: 0, active: false };
+      function initCanvas() { const resize = () => { const ratio = window.devicePixelRatio || 1; canvas.width = window.innerWidth * ratio; canvas.height = window.innerHeight * ratio; ctx.setTransform(ratio, 0, 0, ratio, 0, 0); const count = Math.min(120, Math.max(70, Math.floor(window.innerWidth / 24))); nodes = Array.from({ length: count }, () => ({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, vx: (Math.random() - 0.5) * 0.24, vy: (Math.random() - 0.5) * 0.24, radius: Math.random() * 1.8 + 1.1 })); }; resize(); window.addEventListener('resize', resize); const draw = () => { if (document.hidden) { requestAnimationFrame(draw); return; } ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); ctx.strokeStyle = 'rgba(0,255,0,0.18)'; ctx.lineWidth = 1; for (const node of nodes) { node.x += node.vx; node.y += node.vy; if (node.x < 0 || node.x > window.innerWidth) node.vx *= -1; if (node.y < 0 || node.y > window.innerHeight) node.vy *= -1; for (const other of nodes) { const dx = node.x - other.x; const dy = node.y - other.y; const dist = Math.hypot(dx, dy); if (dist < 120) { ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(other.x, other.y); ctx.stroke(); } } if (mouse.active) { const dx = mouse.x - node.x; const dy = mouse.y - node.y; const dist = Math.hypot(dx, dy); if (dist < 180) { ctx.beginPath(); ctx.moveTo(node.x, node.y); ctx.lineTo(mouse.x, mouse.y); ctx.strokeStyle = `rgba(0,255,0,${0.18 + (1 - dist / 180) * 0.22})`; ctx.stroke(); ctx.strokeStyle = 'rgba(0,255,0,0.18)'; } } ctx.beginPath(); ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2); ctx.fillStyle = 'rgba(0,255,0,0.95)'; ctx.shadowBlur = 14; ctx.shadowColor = 'rgba(0,255,0,0.85)'; ctx.fill(); ctx.shadowBlur = 0; } requestAnimationFrame(draw); }; window.addEventListener('mousemove', (event) => { mouse.x = event.clientX; mouse.y = event.clientY; mouse.active = true; }); window.addEventListener('mouseleave', () => { mouse.active = false; }); document.addEventListener('visibilitychange', () => { if (document.hidden) ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); }); draw(); }
+      window.addEventListener('beforeinstallprompt', (event) => { event.preventDefault(); deferredPrompt = event; pwaBadge.classList.add('show'); });
+      pwaBadge.addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; pwaBadge.classList.remove('show'); });
+      window.addEventListener('appinstalled', () => { pwaBadge.classList.remove('show'); });
+      runBootSequence();
+    </script>
+  </body>
+</html>
